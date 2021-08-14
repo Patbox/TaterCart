@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "eu.pb4.tatercart.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "accessor.AbstractMinecartEntityAccessor",
+    "accessor.EntityAccessor",
+    "accessor.EntitySetHeadYawS2CPacketAccessor",
+    "accessor.PassiveEntityAccessor",
+    "minecart.AbstractMinecartEntityMixin",
+    "minecart.AbstractMinecartEntityTypeMixin",
+    "minecart.EntityTrackerEntryMixin",
+    "minecart.movement.AbstractMinecartEntityMixin",
+    "minecart.movement.FurnaceMinecartEntityMixin",
+    "minecart.movement.SlimeBlockMixin",
+    "rail.AbstractRailBlockMixin",
+    "rail.DetectorRailBlockMixin",
+    "rail.PoweredRailBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
