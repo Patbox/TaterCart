@@ -250,7 +250,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Link
 
         var list = this.world.getOtherEntities(this, this.getBoundingBox().expand(0.98F, 0.0D, 0.98F));
         for (var entity : list) {
-            if (entity instanceof LivingEntity && !entity.noClip && !this.noClip && !this.getPassengerList().contains(entity)) {
+            if (entity instanceof LivingEntity && !entity.noClip && !this.noClip && !this.getPassengerList().contains(entity) && !entity.hasVehicle()) {
                 entity.damage(DamageSource.FLY_INTO_WALL, (float) speed);
                 entity.addVelocity(this.getVelocity().x, this.getVelocity().y + 0.5, this.getVelocity().z);
             }
