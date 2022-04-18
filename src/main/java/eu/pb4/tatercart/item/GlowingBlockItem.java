@@ -1,6 +1,7 @@
 package eu.pb4.tatercart.item;
 
-import eu.pb4.polymer.item.VirtualItem;
+import eu.pb4.polymer.api.item.PolymerItem;
+import eu.pb4.polymer.api.item.PolymerItemUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantments;
@@ -10,7 +11,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class GlowingBlockItem extends BlockItem implements VirtualItem {
+public class GlowingBlockItem extends BlockItem implements PolymerItem {
     private final Item item;
 
     public GlowingBlockItem(Block block, Item item, Settings settings) {
@@ -23,14 +24,14 @@ public class GlowingBlockItem extends BlockItem implements VirtualItem {
     }
 
     @Override
-    public Item getVirtualItem() {
+    public Item getPolymerItem(ItemStack itemStack, ServerPlayerEntity player) {
         return this.item;
     }
 
     @Override
-    public ItemStack getVirtualItemStack(ItemStack itemStack, ServerPlayerEntity player) {
-        ItemStack out = VirtualItem.super.getVirtualItemStack(itemStack, player);
-        out.addEnchantment(Enchantments.BINDING_CURSE, 0);
+    public ItemStack getPolymerItemStack(ItemStack itemStack, ServerPlayerEntity player) {
+        ItemStack out = PolymerItemUtils.createItemStack(itemStack, player);
+        out.addEnchantment(Enchantments.LURE, 0);
         return out;
     }
 }

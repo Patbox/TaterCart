@@ -1,6 +1,6 @@
 package eu.pb4.tatercart.entity.minecart;
 
-import eu.pb4.tatercart.entity.TcEntities;
+import eu.pb4.tatercart.entity.minecart.base.CustomMinecartEntity;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.mixin.accessor.EntityAccessor;
 import net.minecraft.block.BlockState;
@@ -22,8 +22,8 @@ public class SlimeMinecartEntity extends CustomMinecartEntity {
 
     public SlimeMinecartEntity(EntityType<?> entityType, World world) {
         super(entityType, world);
-        this.setCustomBlockOffset(4);
-        this.setCustomBlock(Blocks.MOSS_CARPET.getDefaultState());
+        this.setVisualBlockState(Blocks.MOSS_CARPET.getDefaultState());
+        this.setVisualBlockOffset(4);
     }
 
     @Override
@@ -42,8 +42,8 @@ public class SlimeMinecartEntity extends CustomMinecartEntity {
     @Override
     protected void moveOnRail(BlockPos pos, BlockState state) {
         if (this.isSlimeVisible) {
-            this.setCustomBlockOffset(4);
-            this.setCustomBlock(Blocks.MOSS_CARPET.getDefaultState());
+            this.setVisualBlockState(Blocks.MOSS_CARPET.getDefaultState());
+            this.setVisualBlockOffset(4);
             this.isSlimeVisible = false;
         }
         super.moveOnRail(pos, state);
@@ -52,25 +52,24 @@ public class SlimeMinecartEntity extends CustomMinecartEntity {
     @Override
     protected void moveOffRail() {
         if (!this.isSlimeVisible) {
-            this.setCustomBlockOffset(-8);
-            this.setCustomBlock(Blocks.SLIME_BLOCK.getDefaultState());
+            this.setVisualBlockOffset(-8);
+            this.setVisualBlockState(Blocks.SLIME_BLOCK.getDefaultState());
             this.isSlimeVisible = true;
         }
 
         var movement = this.getVelocity();
         Vec3d ad = ((EntityAccessor) this).callAdjustMovementForCollisions(movement);
-        Vec3d pos = this.getPos();
 
         if (ad.x != movement.x) {
-            this.setVelocity(this.getVelocity().multiply(-0.9, 1, 1));
+            this.setVelocity(this.getVelocity().multiply(-0.8, 1, 1));
         }
 
-        if (ad.y != movement.y) {
-            this.setVelocity(this.getVelocity().multiply(1, -0.9, 1));
+        if (Math.abs(ad.y - movement.y) > 0.09) {
+            this.setVelocity(this.getVelocity().multiply(1, -0.8, 1));
         }
 
         if (ad.z != movement.z) {
-            this.setVelocity(this.getVelocity().multiply(1, 1, -0.9));
+            this.setVelocity(this.getVelocity().multiply(1, 1, -0.8));
         }
 
         super.moveOffRail();

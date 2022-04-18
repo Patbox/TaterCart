@@ -1,14 +1,13 @@
 package eu.pb4.tatercart.other;
 
-import eu.pb4.tatercart.entity.LinkableMinecart;
+import eu.pb4.tatercart.entity.ExtendedMinecart;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class CartUtil {
     public static void setVelocityForLink(AbstractMinecartEntity minecart, AbstractMinecartEntity linked) {
-        var rail = ((LinkableMinecart) minecart).getRailBlock();
+        var rail = ((ExtendedMinecart) minecart).tatercart_getRailBlock();
         if (rail != null) {
             double distance = minecart.getPos().distanceTo(linked.getPos());
             //if (distance > 0.3) {

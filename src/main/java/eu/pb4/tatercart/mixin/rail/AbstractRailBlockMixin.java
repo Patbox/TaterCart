@@ -16,12 +16,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractRailBlock.class)
 public abstract class AbstractRailBlockMixin{
     @Inject(method = "canPlaceAt", at = @At("HEAD"), cancellable = true)
-    private void changePlaceCheck(BlockState state, WorldView world, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    private void tatercart_changePlaceCheck(BlockState state, WorldView world, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(Block.sideCoversSmallSquare(world, pos.down(), Direction.UP));
     }
 
     @Inject(method = "shouldDropRail", at = @At("HEAD"), cancellable = true)
-    private static void changeDropCheck(BlockPos pos, World world, RailShape shape, CallbackInfoReturnable<Boolean> cir) {
+    private static void tatercart_changeDropCheck(BlockPos pos, World world, RailShape shape, CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(!Block.sideCoversSmallSquare(world, pos.down(), Direction.UP));
     }
 }

@@ -8,8 +8,11 @@ import net.devtech.arrp.json.recipe.JIngredients;
 import net.devtech.arrp.json.recipe.JRecipe;
 import net.devtech.arrp.json.recipe.JResult;
 import net.devtech.arrp.json.tags.JTag;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -17,10 +20,14 @@ import static net.devtech.arrp.api.RuntimeResourcePack.id;
 import static net.devtech.arrp.json.loot.JLootTable.*;
 
 public class TcDataPack {
-    public static final RuntimeResourcePack PACK = new RuntimeResourcePackImpl(TaterCartMod.id("main"));
+    public static final RuntimeResourcePack PACK = RuntimeResourcePack.create(TaterCartMod.id("main").toString());
 
     public static void create() {
-        RRPCallback.AFTER_VANILLA.register(a -> a.add(PACK));
+        RRPCallback.BEFORE_VANILLA.register(a -> a.add(PACK));
+
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            PACK.dump();
+        }
     }
 
     public static void createSimpleDrop(Block block) {

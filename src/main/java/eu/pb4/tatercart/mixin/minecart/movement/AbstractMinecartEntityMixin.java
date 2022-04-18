@@ -1,7 +1,7 @@
 package eu.pb4.tatercart.mixin.minecart.movement;
 
-import eu.pb4.holograms.api.holograms.EntityHologram;
-import eu.pb4.tatercart.entity.LinkableMinecart;
+import eu.pb4.tatercart.TaterCartMod;
+import eu.pb4.tatercart.entity.ExtendedMinecart;
 import eu.pb4.tatercart.mixin.accessor.EntityAccessor;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.Block;
@@ -15,8 +15,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.item.Items;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -33,19 +32,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractMinecartEntity.class)
-public abstract class AbstractMinecartEntityMixin extends Entity implements LinkableMinecart {
+public abstract class AbstractMinecartEntityMixin extends Entity implements ExtendedMinecart {
     @Unique
     private AbstractMinecartEntity nextLinkedMinecart = null;
     @Unique
     private AbstractMinecartEntity previousLinkedMinecart = null;
     @Unique
-    private BlockState lastRailBlockState = null;
+    private BlockState tatercart_lastRailBlockState = null;
     @Unique
-    private BlockPos lastRailBlockPos = null;
+    private BlockPos tatercart_lastRailBlockPos = null;
     @Unique
-    private double currentOffset = 0;
+    private double tatercart_currentOffset = 0;
+
     @Unique
-    private EntityHologram hologram;
+    private boolean tatercart_isEnchanced = false;
 
     public AbstractMinecartEntityMixin(net.minecraft.entity.EntityType<?> type, net.minecraft.world.World world) {
         super(type, world);
@@ -57,28 +57,32 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Link
     @Shadow
     public abstract Direction getMovementDirection();
 
-    @Shadow
-    protected abstract void moveOffRail();
+    @Inject(method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;)V", at = @At("TAIL"))
+    private void tatercraft_setDefaultEnhanced(EntityType entityType, World world, CallbackInfo ci) {
+        this.tatercart_isEnchanced = world.getGameRules().getBoolean(TaterCartMod.DEFAULT_ENHANCED);
+    }
 
     @Inject(method = "getMaxOffRailSpeed", at = @At("HEAD"), cancellable = true)
-    private void changeMaxOffRailSpeed(CallbackInfoReturnable<Double> cir) {
-        var isOnCurved = false;
-        if (this.lastRailBlockState != null && this.lastRailBlockState.getBlock() instanceof AbstractRailBlock block) {
-            var shape = this.lastRailBlockState.get(block.getShapeProperty());
+    private void tatercart_changeMaxOffRailSpeed(CallbackInfoReturnable<Double> cir) {
+        if (this.tatercart_isEnchanced) {
+            var isOnCurved = false;
+            if (this.tatercart_lastRailBlockState != null && this.tatercart_lastRailBlockState.getBlock() instanceof AbstractRailBlock block) {
+                var shape = this.tatercart_lastRailBlockState.get(block.getShapeProperty());
 
-            if (shape == RailShape.NORTH_EAST || shape == RailShape.NORTH_WEST || shape == RailShape.SOUTH_EAST || shape == RailShape.SOUTH_WEST) {
-                isOnCurved = true;
+                if (shape == RailShape.NORTH_EAST || shape == RailShape.NORTH_WEST || shape == RailShape.SOUTH_EAST || shape == RailShape.SOUTH_WEST) {
+                    isOnCurved = true;
+                }
             }
-        }
 
-        cir.setReturnValue((this.asEntity().isTouchingWater() ? 4.0 : 8.0) / (isOnCurved ? 22 : 16.0));
+            cir.setReturnValue((this.asEntity().isTouchingWater() ? 4.0 : 8.0) / (isOnCurved ? 22 : 16.0));
+        }
     }
 
     @Inject(method = "moveOnRail", at = @At("HEAD"))
-    private void setWasOnRail(BlockPos pos, BlockState state, CallbackInfo ci) {
-        if (this.lastRailBlockState != state || !pos.equals(this.lastRailBlockPos)) {
-            this.lastRailBlockState = state;
-            this.lastRailBlockPos = pos;
+    private void tatercart_setWasOnRail(BlockPos pos, BlockState state, CallbackInfo ci) {
+        if (this.tatercart_isEnchanced && (this.tatercart_lastRailBlockState != state || !pos.equals(this.tatercart_lastRailBlockPos))) {
+            this.tatercart_lastRailBlockState = state;
+            this.tatercart_lastRailBlockPos = pos;
             try {
                 var world = asEntity().world;
                 var underPos = pos.down();
@@ -93,9 +97,9 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Link
                 var maxY = Math.max(collisionShape1.isEmpty() ? 0 : collisionShape1.getBoundingBox().maxY, collisionShape2.isEmpty() ? 0 : collisionShape2.getBoundingBox().maxY);
 
                 if (maxY > 1) {
-                    this.currentOffset = maxY - 1;
+                    this.tatercart_currentOffset = maxY - 1;
                 } else {
-                    this.currentOffset = 0;
+                    this.tatercart_currentOffset = 0;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -104,106 +108,121 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Link
     }
 
     @Redirect(method = "moveOnRail", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z", ordinal = 0))
-    private boolean checkForCustomPoweredRails(BlockState blockState, Block block) {
+    private boolean tatercart_checkForCustomPoweredRails(BlockState blockState, Block block) {
         return blockState.getBlock() instanceof PoweredRailBlock;
     }
 
     @Redirect(method = "moveOnRail", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V", ordinal = 0))
-    private void bounceBeforeMoving(AbstractMinecartEntity abstractMinecartEntity, MovementType movementType, Vec3d movement) {
-        var ad = ((EntityAccessor) this.asEntity()).callAdjustMovementForCollisions(movement);
-        var pos = this.asEntity().getPos();
-        var deltaX = this.asEntity().getPos().x + ad.x;
-        var deltaY = this.asEntity().getPos().y + ad.y;
-        var deltaZ = this.asEntity().getPos().z + ad.z;
+    private void tatercart_bounceBeforeMoving(AbstractMinecartEntity abstractMinecartEntity, MovementType movementType, Vec3d movement) {
+        if (this.tatercart_isEnchanced) {
+            var ad = ((EntityAccessor) this.asEntity()).callAdjustMovementForCollisions(movement);
+            var pos = this.asEntity().getPos();
+            var deltaX = this.asEntity().getPos().x + ad.x;
+            var deltaY = this.asEntity().getPos().y + ad.y;
+            var deltaZ = this.asEntity().getPos().z + ad.z;
 
-        if (ad.x != movement.x) {
-            var state = this.asEntity().world.getBlockState(new BlockPos(deltaX, deltaY, pos.z).offset(this.asEntity().getMovementDirection()));
-            if (state.getBlock() instanceof SlimeBlock) {
-                this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(-0.95, 1, 1));
-                movement = movement.multiply(-0.95, 1, 1);
+            if (ad.x != movement.x) {
+                var state = this.asEntity().world.getBlockState(new BlockPos(deltaX, deltaY, pos.z).offset(this.asEntity().getMovementDirection()));
+                if (state.getBlock() instanceof SlimeBlock) {
+                    this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(-0.95, 1, 1));
+                    movement = movement.multiply(-0.95, 1, 1);
+                }
+            }
+
+            if (ad.z != movement.z) {
+                var state = this.asEntity().world.getBlockState(new BlockPos(pos.x, deltaY, deltaZ).offset(this.asEntity().getMovementDirection()));
+                if (state.getBlock() instanceof SlimeBlock) {
+                    this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(1, 1, -0.95));
+                    movement = movement.multiply(1, 1, -0.95);
+                }
             }
         }
-
-        if (ad.z != movement.z) {
-            var state = this.asEntity().world.getBlockState(new BlockPos(pos.x, deltaY, deltaZ).offset(this.asEntity().getMovementDirection()));
-            if (state.getBlock() instanceof SlimeBlock) {
-                this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(1, 1, -0.95));
-                movement = movement.multiply(1, 1, -0.95);
-            }
-        }
-
         this.asEntity().move(movementType, movement);
     }
 
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;setPitch(F)V"))
-    private void changePitch(AbstractMinecartEntity minecartEntity, float pitch) {
-        var i = this.getMovementDirection().getDirection().offset();
+    private void tatercart_changePitch(AbstractMinecartEntity minecartEntity, float pitch) {
+        if (this.tatercart_isEnchanced) {
+            var i = this.getMovementDirection().getDirection().offset();
 
-        var value = (float) (i * this.getVelocity().y * 90 * -this.getHorizontalFacing().rotateYClockwise().getDirection().offset());
-        this.setPitch(MathHelper.clamp(value, -80.0F, 80.0F) % 360.0F);
+            var value = (float) (i * this.getVelocity().y * 90 * -this.getHorizontalFacing().rotateYClockwise().getDirection().offset());
+            this.setPitch(MathHelper.clamp(value, -80.0F, 80.0F) % 360.0F);
+        }
     }
 
     @Inject(method = "moveOffRail", at = @At("HEAD"), cancellable = true)
-    public void customMoveOffRail(CallbackInfo ci) {
-        var max = this.getMaxOffRailSpeed() * 2.5;
-        var movement = this.asEntity().getVelocity();
-        this.currentOffset = 0;
+    public void tatercart_customMoveOffRail(CallbackInfo ci) {
+        if (this.tatercart_isEnchanced) {
+            var max = this.getMaxOffRailSpeed() * 2.5;
+            var movement = this.asEntity().getVelocity();
+            this.tatercart_currentOffset = 0;
 
-        if (this.lastRailBlockState == null) {
-            this.asEntity().setVelocity(MathHelper.clamp(movement.x, -max, max), movement.y, MathHelper.clamp(movement.z, -max, max));
-        } else {
-            var railShape = this.lastRailBlockState.get(((AbstractRailBlock) this.lastRailBlockState.getBlock()).getShapeProperty());
+            if (this.tatercart_lastRailBlockState == null) {
+                this.asEntity().setVelocity(MathHelper.clamp(movement.x, -max, max), movement.y, MathHelper.clamp(movement.z, -max, max));
+            } else {
+                var railShape = this.tatercart_lastRailBlockState.get(((AbstractRailBlock) this.tatercart_lastRailBlockState.getBlock()).getShapeProperty());
 
-            var multiplier = 0.316;
-            var power = movement.horizontalLength() * multiplier;
+                var multiplier = 0.316;
+                var power = movement.horizontalLength() * multiplier;
 
-            var yVel = switch (railShape) {
-                case ASCENDING_EAST -> movement.x > 0 ? power : -power;
-                case ASCENDING_WEST -> movement.x < 0 ? power : -power;
-                case ASCENDING_NORTH -> movement.z < 0 ? power : -power;
-                case ASCENDING_SOUTH -> movement.z > 0 ? power : -power;
-                default -> 0;
-            };
+                var yVel = switch (railShape) {
+                    case ASCENDING_EAST -> movement.x > 0 ? power : -power;
+                    case ASCENDING_WEST -> movement.x < 0 ? power : -power;
+                    case ASCENDING_NORTH -> movement.z < 0 ? power : -power;
+                    case ASCENDING_SOUTH -> movement.z > 0 ? power : -power;
+                    default -> 0;
+                };
 
-            this.asEntity().setVelocity(MathHelper.clamp(movement.x * multiplier, -max, max), movement.y + yVel, MathHelper.clamp(movement.z * multiplier, -max, max));
-            this.lastRailBlockState = null;
-        }
-
-        if (this.asEntity().isOnGround()) {
-            this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(0.85d));
-        } else {
-            this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(0.995d));
-        }
-
-        var ad = ((EntityAccessor) this.asEntity()).callAdjustMovementForCollisions(movement);
-        var pos = this.asEntity().getPos();
-        var deltaX = this.asEntity().getPos().x + ad.x;
-        var deltaY = this.asEntity().getPos().y + ad.y;
-        var deltaZ = this.asEntity().getPos().z + ad.z;
-
-
-        if (ad.x != movement.x) {
-            var state = this.asEntity().world.getBlockState(new BlockPos(deltaX, deltaY, pos.z).offset(this.getMovementDirection()));
-            if (state.getBlock() instanceof SlimeBlock) {
-                this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(-0.9, 1, 1));
+                this.asEntity().setVelocity(MathHelper.clamp(movement.x * multiplier, -max, max), movement.y + yVel, MathHelper.clamp(movement.z * multiplier, -max, max));
+                this.tatercart_lastRailBlockState = null;
             }
-        }
 
-        if (ad.z != movement.z) {
-            var state = this.asEntity().world.getBlockState(new BlockPos(pos.x, deltaY, deltaZ).offset(this.getMovementDirection()));
-            if (state.getBlock() instanceof SlimeBlock) {
-                this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(1, 1, -0.9));
+            if (this.asEntity().isOnGround()) {
+                this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(0.85d));
+            } else {
+                this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(0.995d));
             }
-        }
 
-        this.asEntity().move(MovementType.SELF, this.asEntity().getVelocity());
-        ci.cancel();
+            var ad = ((EntityAccessor) this.asEntity()).callAdjustMovementForCollisions(movement);
+            var pos = this.asEntity().getPos();
+            var deltaX = this.asEntity().getPos().x + ad.x;
+            var deltaY = this.asEntity().getPos().y + ad.y;
+            var deltaZ = this.asEntity().getPos().z + ad.z;
+
+
+            if (ad.x != movement.x) {
+                var state = this.asEntity().world.getBlockState(new BlockPos(deltaX, deltaY, pos.z).offset(this.getMovementDirection()));
+                if (state.getBlock() instanceof SlimeBlock) {
+                    this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(-0.9, 1, 1));
+                }
+            }
+
+            if (ad.z != movement.z) {
+                var state = this.asEntity().world.getBlockState(new BlockPos(pos.x, deltaY, deltaZ).offset(this.getMovementDirection()));
+                if (state.getBlock() instanceof SlimeBlock) {
+                    this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(1, 1, -0.9));
+                }
+            }
+
+            this.asEntity().move(MovementType.SELF, this.asEntity().getVelocity());
+            ci.cancel();
+        }
     }
 
     @Override
     protected Box calculateBoundingBox() {
         var box = super.calculateBoundingBox();
-        return box.withMinY(this.currentOffset + box.minY);
+        return box.withMinY(this.tatercart_currentOffset + box.minY);
+    }
+
+    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
+    private void tatercart_saveData(NbtCompound nbt, CallbackInfo ci) {
+        nbt.putBoolean("tatercart:enchanced", this.tatercart_isEnchanced);
+    }
+
+    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+    private void tatercart_readData(NbtCompound nbt, CallbackInfo ci) {
+        this.tatercart_isEnchanced = nbt.getBoolean("tatercart:enchanced");
     }
 
     /*@Inject(method = "tick", at = @At("HEAD"))
@@ -237,27 +256,39 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Link
     }*/
 
     @Override
-    public BlockState getRailBlock() {
-        return this.lastRailBlockState;
+    public BlockState tatercart_getRailBlock() {
+        return this.tatercart_lastRailBlockState;
+    }
+
+    @Override
+    public boolean tatercart_isEnchanced() {
+        return this.tatercart_isEnchanced;
+    }
+
+    @Override
+    public void tatercart_setEnchanced(boolean value) {
+        this.tatercart_isEnchanced = value;
     }
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
     private void customPushing(CallbackInfo ci) {
-        var speed = this.getVelocity().horizontalLengthSquared();
-        if (speed < 1.5) {
-            return;
-        }
+        if (this.tatercart_isEnchanced) {
+            var speed = this.getVelocity().horizontalLengthSquared();
+            if (speed < 1.5) {
+                return;
+            }
 
-        var list = this.world.getOtherEntities(this, this.getBoundingBox().expand(0.98F, 0.0D, 0.98F));
-        for (var entity : list) {
-            if (entity instanceof LivingEntity && !entity.noClip && !this.noClip && !this.getPassengerList().contains(entity) && !entity.hasVehicle()) {
-                entity.damage(DamageSource.FLY_INTO_WALL, (float) speed);
-                entity.addVelocity(this.getVelocity().x, this.getVelocity().y + 0.5, this.getVelocity().z);
+            var list = this.world.getOtherEntities(this, this.getBoundingBox().expand(0.98F, 0.0D, 0.98F));
+            for (var entity : list) {
+                if (entity instanceof LivingEntity && !entity.noClip && !this.noClip && !this.getPassengerList().contains(entity) && !entity.hasVehicle()) {
+                    entity.damage(DamageSource.FLY_INTO_WALL, (float) speed);
+                    entity.addVelocity(this.getVelocity().x, this.getVelocity().y + 0.5, this.getVelocity().z);
+                }
             }
         }
     }
 
-    @Override
+    /*@Override
     public AbstractMinecartEntity getNextLinked() {
         return this.nextLinkedMinecart;
     }
@@ -280,16 +311,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Link
     @Override
     public boolean canLink() {
         return true;
-    }
-
-    @Inject(method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;)V", at = @At("TAIL"))
-    private void addHologram(EntityType<?> entityType, World world, CallbackInfo ci) {
-        if (world instanceof ServerWorld) {
-            this.hologram = new EntityHologram(this.asEntity(), Vec3d.ZERO);
-            this.hologram.show();
-            this.hologram.addItemStack(Items.TORCH.getDefaultStack(), true);
-        }
-    }
+    }*/
 
     @Unique
     private AbstractMinecartEntity asEntity() {

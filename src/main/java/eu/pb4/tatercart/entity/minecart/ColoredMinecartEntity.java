@@ -7,12 +7,12 @@ import eu.pb4.holograms.mixin.accessors.EntityTrackerUpdateS2CPacketAccessor;
 import eu.pb4.holograms.mixin.accessors.MobSpawnS2CPacketAccessor;
 import eu.pb4.holograms.utils.PacketHelpers;
 import eu.pb4.tatercart.entity.TcEntities;
+import eu.pb4.tatercart.entity.minecart.base.CustomMinecartEntity;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.mixin.accessor.AbstractMinecartEntityAccessor;
 import eu.pb4.tatercart.mixin.accessor.EntitySetHeadYawS2CPacketAccessor;
 import eu.pb4.tatercart.mixin.accessor.PassiveEntityAccessor;
 import io.netty.util.internal.shaded.org.jctools.util.UnsafeAccess;
-import lombok.Getter;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -27,6 +27,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
@@ -35,30 +36,26 @@ import net.minecraft.world.World;
 import java.util.*;
 
 public class ColoredMinecartEntity extends CustomMinecartEntity {
-    private static final Map<DyeColor, BannerBlock> BANNERS = new HashMap<>();
-
-    static {
-        for (var block : BlockTags.BANNERS.values()) {
-            if (block instanceof BannerBlock banner) {
-                BANNERS.put(banner.getColor(), banner);
-            }
-        }
-    }
-
     private final ArrayList<ServerPlayerEntity> listeners = new ArrayList<>();
     private final int bannerEntityId;
 
-    @Getter
     private final DyeColor color;
 
-    @Getter
+    public DyeColor getColor() {
+        return this.color;
+    }
+
     private final BannerBlock bannerBlock;
+
+    public BannerBlock getBannerBlock() {
+        return this.bannerBlock;
+    }
 
     public ColoredMinecartEntity(EntityType<?> entityType, World world) {
         super(entityType, world);
 
         color = TcEntities.COLORED_MINECART.inverse().get(entityType);
-        bannerBlock = BANNERS.get(color);
+        bannerBlock = (BannerBlock) Registry.BLOCK.get(new Identifier(color.getName() + "_banner"));
 
         setCustomBlock(Blocks.SPRUCE_FENCE.getDefaultState());
         bannerEntityId = EntityAccessor.getMaxEntityId().incrementAndGet();

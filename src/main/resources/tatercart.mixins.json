@@ -11,6 +11,7 @@
     "minecart.AbstractMinecartEntityMixin",
     "minecart.AbstractMinecartEntityTypeMixin",
     "minecart.EntityTrackerEntryMixin",
+    "minecart.PlayerEntityMixin",
     "minecart.movement.AbstractMinecartEntityMixin",
     "minecart.movement.FurnaceMinecartEntityMixin",
     "minecart.movement.SlimeBlockMixin",

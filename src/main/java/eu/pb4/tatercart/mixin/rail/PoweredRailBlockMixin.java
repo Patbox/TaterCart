@@ -17,12 +17,12 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(PoweredRailBlock.class)
 public class PoweredRailBlockMixin {
     @Redirect(method = "isPoweredByOtherRails(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ZILnet/minecraft/block/enums/RailShape;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z", ordinal = 0))
-    private boolean allowCustomPoweredRailBlocks(BlockState blockState, Block block) {
+    private boolean tatercart_allowCustomPoweredRailBlocks(BlockState blockState, Block block) {
         return blockState.getBlock() instanceof PoweredRailBlock;
     }
 
     @Inject(method = "isPoweredByOtherRails(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ZILnet/minecraft/block/enums/RailShape;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isReceivingRedstonePower(Lnet/minecraft/util/math/BlockPos;)Z", shift = At.Shift.BEFORE, ordinal = 0), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
-    private void alwaysPoweredIsAlsoASource(World world, BlockPos pos, boolean bl, int distance, RailShape shape, CallbackInfoReturnable<Boolean> cir, BlockState blockState) {
+    private void tatercart_alwaysPoweredIsAlsoASource(World world, BlockPos pos, boolean bl, int distance, RailShape shape, CallbackInfoReturnable<Boolean> cir, BlockState blockState) {
         if (blockState.isOf(TcBlocks.ALWAYS_POWERED_RAIL)) {
             cir.setReturnValue(true);
         }

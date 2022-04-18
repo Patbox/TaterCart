@@ -20,6 +20,9 @@
   "item.tatercart.slime_minecart": "Bouncy Minecart",
   "item.tatercart.minecart_with_x": "Minecart with %s",
   "item.tatercart.barrel_minecart": "Minecart with Barrel",
+  "item.tatercart.minecart_enhancer": "Minecart Enhancer",
+  "item.tatercart.minecart_enhancer.desc.1": "Switches between TaterCart (green)",
+  "item.tatercart.minecart_enhancer.desc.2": "and Vanilla (red) physics.",
   "entity.tatercart.slime_minecart": "Bouncy Minecart",
   "entity.tatercart.minecart_with_x": "Minecart with %s",
   "entity.tatercart.barrel_minecart": "Minecart with Barrel"

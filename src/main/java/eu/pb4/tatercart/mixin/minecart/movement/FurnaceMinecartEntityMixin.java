@@ -1,5 +1,6 @@
 package eu.pb4.tatercart.mixin.minecart.movement;
 
+import eu.pb4.tatercart.entity.ExtendedMinecart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
@@ -11,14 +12,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FurnaceMinecartEntity.class)
-public abstract class FurnaceMinecartEntityMixin extends AbstractMinecartEntity {
+public abstract class FurnaceMinecartEntityMixin extends AbstractMinecartEntity implements ExtendedMinecart {
     public FurnaceMinecartEntityMixin(EntityType<?> type, World world) {
         super(type, world);
     }
 
     @Inject(method = "getMaxOffRailSpeed", at = @At("HEAD"), cancellable = true)
     private void changeMaxSpeedToNormal(CallbackInfoReturnable<Double> cir) {
-        cir.setReturnValue(super.getMaxOffRailSpeed());
+        if (this.tatercart_isEnchanced()) {
+            cir.setReturnValue(super.getMaxOffRailSpeed());
+        }
     }
 
     @Override
