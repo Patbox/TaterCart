@@ -44,6 +44,7 @@ public class AbstractMinecartEntityTypeMixin {
 
         types.add(CustomMinecartType.SLIME = newType("slime_minecart", lastId++));
         types.add(CustomMinecartType.BARREL = newType("barrel_minecart", lastId++));
+        types.add(CustomMinecartType.SHULKER = newType("shulker_minecart", lastId++));
 
         values = types.toArray(AbstractMinecartEntity.Type[]::new);
     }

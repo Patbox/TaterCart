@@ -4,6 +4,7 @@ import eu.pb4.polymer.api.item.PolymerItemGroup;
 import eu.pb4.tatercart.TcDataPack;
 import eu.pb4.tatercart.block.TcBlocks;
 import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
+import net.devtech.arrp.json.recipe.JRecipe;
 import net.minecraft.block.BannerBlock;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -39,6 +40,7 @@ public final class TcItems {
 
     public static final CustomMinecartItem SLIME_MINECART = new CustomMinecartItem(CustomMinecartType.SLIME);
     public static final CustomMinecartItem BARREL_MINECART = new CustomMinecartItem(CustomMinecartType.BARREL);
+    public static final CustomMinecartItem SHULKER_MINECART = new ShulkerMinecartItem();
     public static final Map<DyeColor, CustomMinecartItem> COLORED_MINECART = new HashMap<>();
 
     public static void register() {
@@ -48,6 +50,7 @@ public final class TcItems {
 
         register("slime_minecart", SLIME_MINECART);
         register("barrel_minecart", BARREL_MINECART);
+        register("shulker_minecart", SHULKER_MINECART);
 
         for (var dyeColor : DyeColor.values()) {
             COLORED_MINECART.put(

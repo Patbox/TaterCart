@@ -1,6 +1,5 @@
 package eu.pb4.tatercart.entity.minecart;
 
-import eu.pb4.tatercart.entity.minecart.base.CustomMinecartEntity;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.mixin.accessor.EntityAccessor;
 import net.minecraft.block.BlockState;
@@ -61,15 +60,15 @@ public class SlimeMinecartEntity extends CustomMinecartEntity {
         Vec3d ad = ((EntityAccessor) this).callAdjustMovementForCollisions(movement);
 
         if (ad.x != movement.x) {
-            this.setVelocity(this.getVelocity().multiply(-0.8, 1, 1));
+            this.setVelocity(this.getVelocity().multiply(-0.6, 1, 1));
         }
 
-        if (Math.abs(ad.y - movement.y) > 0.09) {
+        if (Math.abs(ad.y - movement.y) > 0.05) {
             this.setVelocity(this.getVelocity().multiply(1, -0.8, 1));
         }
 
         if (ad.z != movement.z) {
-            this.setVelocity(this.getVelocity().multiply(1, 1, -0.8));
+            this.setVelocity(this.getVelocity().multiply(1, 1, -0.6));
         }
 
         super.moveOffRail();

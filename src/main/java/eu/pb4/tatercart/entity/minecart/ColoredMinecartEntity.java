@@ -6,8 +6,8 @@ import eu.pb4.holograms.mixin.accessors.EntityPassengersSetS2CPacketAccessor;
 import eu.pb4.holograms.mixin.accessors.EntityTrackerUpdateS2CPacketAccessor;
 import eu.pb4.holograms.mixin.accessors.MobSpawnS2CPacketAccessor;
 import eu.pb4.holograms.utils.PacketHelpers;
+import eu.pb4.tatercart.entity.Colorable;
 import eu.pb4.tatercart.entity.TcEntities;
-import eu.pb4.tatercart.entity.minecart.base.CustomMinecartEntity;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.mixin.accessor.AbstractMinecartEntityAccessor;
 import eu.pb4.tatercart.mixin.accessor.EntitySetHeadYawS2CPacketAccessor;
@@ -24,7 +24,6 @@ import net.minecraft.network.packet.s2c.play.EntitiesDestroyS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntitySetHeadYawS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -35,7 +34,7 @@ import net.minecraft.world.World;
 
 import java.util.*;
 
-public class ColoredMinecartEntity extends CustomMinecartEntity {
+public class ColoredMinecartEntity extends CustomMinecartEntity implements Colorable {
     private final ArrayList<ServerPlayerEntity> listeners = new ArrayList<>();
     private final int bannerEntityId;
 

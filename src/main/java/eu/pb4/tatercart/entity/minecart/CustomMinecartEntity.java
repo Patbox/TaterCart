@@ -1,4 +1,4 @@
-package eu.pb4.tatercart.entity.minecart.base;
+package eu.pb4.tatercart.entity.minecart;
 
 import eu.pb4.polymer.api.entity.PolymerEntity;
 import eu.pb4.polymer.api.item.PolymerItem;
@@ -114,5 +114,9 @@ public abstract class CustomMinecartEntity extends AbstractMinecartEntity implem
         }
 
         super.tick();
+    }
+
+    protected BlockState getVisualState() {
+        return this.visualBlock;
     }
 }

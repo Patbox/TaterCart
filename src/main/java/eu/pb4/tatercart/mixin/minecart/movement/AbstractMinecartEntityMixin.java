@@ -74,7 +74,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
                 }
             }
 
-            cir.setReturnValue((this.asEntity().isTouchingWater() ? 4.0 : 8.0) / (isOnCurved ? 22 : 16.0));
+            cir.setReturnValue((this.asEntity().isTouchingWater() ? 4.0 : 8.0) / (isOnCurved ? 24 : 16.0));
         }
     }
 
@@ -140,7 +140,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
         this.asEntity().move(movementType, movement);
     }
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;setPitch(F)V"))
+    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;setPitch(F)V", ordinal = 1))
     private void tatercart_changePitch(AbstractMinecartEntity minecartEntity, float pitch) {
         if (this.tatercart_isEnchanced) {
             var i = this.getMovementDirection().getDirection().offset();
