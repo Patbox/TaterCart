@@ -1,8 +1,7 @@
 package eu.pb4.tatercart.block.rail;
 
 import eu.pb4.polymer.api.block.PolymerBlock;
-import eu.pb4.tatercart.entity.minecart.ColoredMinecartEntity;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import eu.pb4.tatercart.entity.minecart.other.ColoredMinecartEntity;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

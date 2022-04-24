@@ -42,9 +42,11 @@ public class AbstractMinecartEntityTypeMixin {
             types.add(CustomMinecartType.COLORED.put(dyeColor, newType(dyeColor.name(), lastId++)));
         }
 
-        types.add(CustomMinecartType.SLIME = newType("slime_minecart", lastId++));
-        types.add(CustomMinecartType.BARREL = newType("barrel_minecart", lastId++));
-        types.add(CustomMinecartType.SHULKER = newType("shulker_minecart", lastId++));
+        types.add(CustomMinecartType.SLIME = newType("tatercart_slime", lastId++));
+        types.add(CustomMinecartType.BARREL = newType("tatercart_barrel", lastId++));
+        types.add(CustomMinecartType.SHULKER = newType("tatercart_shulker", lastId++));
+        types.add(CustomMinecartType.DISPENSER = newType("tatercart_dispenser", lastId++));
+        types.add(CustomMinecartType.DROPPER = newType("tatercart_dropper", lastId++));
 
         values = types.toArray(AbstractMinecartEntity.Type[]::new);
     }

@@ -1,5 +1,7 @@
-package eu.pb4.tatercart.entity.minecart;
+package eu.pb4.tatercart.entity.minecart.other;
 
+import eu.pb4.tatercart.entity.minecart.CustomMinecartEntity;
+import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.mixin.accessor.EntityAccessor;
 import net.minecraft.block.BlockState;
@@ -7,6 +9,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -15,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class SlimeMinecartEntity extends CustomMinecartEntity {
     private boolean isSlimeVisible = false;
@@ -31,11 +36,13 @@ public class SlimeMinecartEntity extends CustomMinecartEntity {
     }
 
     @Override
-    public void dropItems(DamageSource damageSource) {
-        super.dropItems(damageSource);
-        if (!damageSource.isExplosive() && this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-            this.dropItem(Items.SLIME_BLOCK);
-        }
+    protected @Nullable Item getDropItem() {
+        return Items.SLIME_BLOCK;
+    }
+
+    @Override
+    public ItemStack getPickBlockStack() {
+        return TcItems.SLIME_MINECART.getDefaultStack();
     }
 
     @Override

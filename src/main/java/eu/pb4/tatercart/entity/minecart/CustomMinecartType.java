@@ -13,5 +13,7 @@ public class CustomMinecartType {
     public static AbstractMinecartEntity.Type SLIME;
     public static AbstractMinecartEntity.Type BARREL;
     public static AbstractMinecartEntity.Type SHULKER;
+    public static AbstractMinecartEntity.Type DISPENSER;
+    public static AbstractMinecartEntity.Type DROPPER;
     public static BiMap<DyeColor, AbstractMinecartEntity.Type> COLORED = HashBiMap.create();
 }

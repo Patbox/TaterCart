@@ -4,6 +4,9 @@
   "package": "eu.pb4.tatercart.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "DispenserBlockAccessor",
+    "MinecartItemBehaviorMixin",
+    "MinecartItemMixin",
     "accessor.AbstractMinecartEntityAccessor",
     "accessor.EntityAccessor",
     "accessor.EntitySetHeadYawS2CPacketAccessor",

@@ -2,20 +2,17 @@ package eu.pb4.tatercart.mixin.rail;
 
 import eu.pb4.tatercart.block.TcBlocks;
 import eu.pb4.tatercart.block.rail.ColoredDetectorRailBlock;
-import eu.pb4.tatercart.entity.minecart.ColoredMinecartEntity;
+import eu.pb4.tatercart.entity.minecart.other.ColoredMinecartEntity;
 import net.minecraft.block.DetectorRailBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collections;

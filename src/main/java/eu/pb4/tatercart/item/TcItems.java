@@ -38,9 +38,11 @@ public final class TcItems {
     public static final Item ALWAYS_POWERED_RAIL = new GlowingBlockItem(TcBlocks.ALWAYS_POWERED_RAIL, Items.POWERED_RAIL, new Item.Settings().group(ITEM_GROUP));
     public static final Item COLORED_DETECTOR_RAIL = new GlowingBlockItem(TcBlocks.COLORED_DETECTOR_RAIL, Items.DETECTOR_RAIL, new Item.Settings().group(ITEM_GROUP));
 
-    public static final CustomMinecartItem SLIME_MINECART = new CustomMinecartItem(CustomMinecartType.SLIME);
-    public static final CustomMinecartItem BARREL_MINECART = new CustomMinecartItem(CustomMinecartType.BARREL);
-    public static final CustomMinecartItem SHULKER_MINECART = new ShulkerMinecartItem();
+    public static final CustomMinecartItem SLIME_MINECART = new CustomMinecartItem(CustomMinecartType.SLIME, Items.MINECART);
+    public static final CustomMinecartItem BARREL_MINECART = new CustomMinecartItem(CustomMinecartType.BARREL, Items.CHEST_MINECART);
+    public static final CustomMinecartItem DISPENSER_MINECART = new CustomMinecartItem(CustomMinecartType.DISPENSER, Items.FURNACE_MINECART);
+    public static final CustomMinecartItem DROPPER_MINECART = new CustomMinecartItem(CustomMinecartType.DROPPER, Items.FURNACE_MINECART);
+    public static final ShulkerMinecartItem SHULKER_MINECART = new ShulkerMinecartItem();
     public static final Map<DyeColor, CustomMinecartItem> COLORED_MINECART = new HashMap<>();
 
     public static void register() {
@@ -50,12 +52,14 @@ public final class TcItems {
 
         register("slime_minecart", SLIME_MINECART);
         register("barrel_minecart", BARREL_MINECART);
+        register("dispenser_minecart", DISPENSER_MINECART);
+        register("dropper_minecart", DROPPER_MINECART);
         register("shulker_minecart", SHULKER_MINECART);
 
         for (var dyeColor : DyeColor.values()) {
             COLORED_MINECART.put(
                     dyeColor,
-                    register(dyeColor.getName() + "_colored_minecart", new CustomMinecartItem(CustomMinecartType.COLORED.get(dyeColor)))
+                    register(dyeColor.getName() + "_colored_minecart", new CustomMinecartItem(CustomMinecartType.COLORED.get(dyeColor), Items.MINECART))
             );
         }
     }
@@ -72,6 +76,8 @@ public final class TcItems {
 
         TcDataPack.createCraftingShapeless(SLIME_MINECART, 1, Items.MINECART, Items.SLIME_BLOCK);
         TcDataPack.createCraftingShapeless(BARREL_MINECART, 1, Items.MINECART, Items.BARREL);
+        TcDataPack.createCraftingShapeless(DISPENSER_MINECART, 1, Items.MINECART, Items.DISPENSER);
+        TcDataPack.createCraftingShapeless(DROPPER_MINECART, 1, Items.MINECART, Items.DROPPER);
 
         for (var entry : COLORED_MINECART.entrySet()) {
             TcDataPack.createCraftingShapeless(entry.getValue(), 1, Items.MINECART, BannerBlock.getForColor(entry.getKey()).asItem());

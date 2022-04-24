@@ -6,9 +6,11 @@ import eu.pb4.tatercart.TaterCartMod;
 import eu.pb4.tatercart.entity.ExtendedMinecart;
 import eu.pb4.tatercart.entity.TcEntities;
 import eu.pb4.tatercart.entity.minecart.storage.BarrelMinecartEntity;
-import eu.pb4.tatercart.entity.minecart.ColoredMinecartEntity;
+import eu.pb4.tatercart.entity.minecart.other.ColoredMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
-import eu.pb4.tatercart.entity.minecart.SlimeMinecartEntity;
+import eu.pb4.tatercart.entity.minecart.other.SlimeMinecartEntity;
+import eu.pb4.tatercart.entity.minecart.storage.DispenserMinecartEntity;
+import eu.pb4.tatercart.entity.minecart.storage.DropperMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.ShulkerMinecartEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -37,20 +39,24 @@ public abstract class AbstractMinecartEntityMixin extends Entity {
     @Inject(method = "create", at = @At("HEAD"), cancellable = true)
     private static void tatercart_onCreate(World world, double x, double y, double z, AbstractMinecartEntity.Type type, CallbackInfoReturnable<AbstractMinecartEntity> cir) {
         var dyeColor = CustomMinecartType.COLORED.inverse().getOrDefault(type, null);
+        AbstractMinecartEntity entity;
         if (dyeColor != null) {
-            var entity = new ColoredMinecartEntity(TcEntities.COLORED_MINECART.get(dyeColor), world);
-            entity.setPosition(x, y, z);
-            cir.setReturnValue(entity);
+            entity = new ColoredMinecartEntity(TcEntities.COLORED_MINECART.get(dyeColor), world);
         } else if (type == CustomMinecartType.SLIME) {
-            var entity = new SlimeMinecartEntity(TcEntities.SLIME_MINECART, world);
-            entity.setPosition(x, y, z);
-            cir.setReturnValue(entity);
+            entity = new SlimeMinecartEntity(TcEntities.SLIME_MINECART, world);
         } else if (type == CustomMinecartType.BARREL) {
-            var entity = new BarrelMinecartEntity(TcEntities.BARREL_MINECART, world);
-            entity.setPosition(x, y, z);
-            cir.setReturnValue(entity);
-        }  else if (type == CustomMinecartType.SHULKER) {
-            var entity = new ShulkerMinecartEntity(TcEntities.SHULKER_MINECART, world);
+            entity = new BarrelMinecartEntity(TcEntities.BARREL_MINECART, world);
+        } else if (type == CustomMinecartType.SHULKER) {
+            entity = new ShulkerMinecartEntity(TcEntities.SHULKER_MINECART, world);
+        } else if (type == CustomMinecartType.DISPENSER) {
+            entity = new DispenserMinecartEntity(TcEntities.DISPENSER_MINECART, world);
+        } else if (type == CustomMinecartType.DROPPER) {
+            entity = new DropperMinecartEntity(TcEntities.DROPPER_MINECART, world);
+        } else {
+            entity = null;
+        }
+
+        if (entity != null) {
             entity.setPosition(x, y, z);
             cir.setReturnValue(entity);
         }

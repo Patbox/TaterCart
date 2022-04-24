@@ -9,10 +9,8 @@ import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.block.enums.RailShape;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.MinecartItem;
+import net.minecraft.item.*;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
@@ -83,7 +81,7 @@ public class ShulkerMinecartItem extends CustomMinecartItem {
     };
 
     public ShulkerMinecartItem() {
-        super(CustomMinecartType.SHULKER);
+        super(CustomMinecartType.SHULKER, Items.CHEST_MINECART);
         DispenserBlock.registerBehavior(this, DISPENSER_BEHAVIOR);
     }
 
@@ -143,5 +141,11 @@ public class ShulkerMinecartItem extends CustomMinecartItem {
                 stacks.add(stack);
             }
         }
+    }
+
+    public ItemStack from(ItemStack shulker) {
+        var stack = new ItemStack(this);
+        stack.getOrCreateNbt().put("ShulkerBox", shulker.writeNbt(new NbtCompound()));
+        return stack;
     }
 }

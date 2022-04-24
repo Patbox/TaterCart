@@ -57,6 +57,8 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
     @Shadow
     public abstract Direction getMovementDirection();
 
+    @Shadow private boolean yawFlipped;
+
     @Inject(method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;)V", at = @At("TAIL"))
     private void tatercraft_setDefaultEnhanced(EntityType entityType, World world, CallbackInfo ci) {
         this.tatercart_isEnchanced = world.getGameRules().getBoolean(TaterCartMod.DEFAULT_ENHANCED);
@@ -312,6 +314,11 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
     public boolean canLink() {
         return true;
     }*/
+
+    @Override
+    public boolean tatercart_isYawFlipped() {
+        return this.yawFlipped;
+    }
 
     @Unique
     private AbstractMinecartEntity asEntity() {

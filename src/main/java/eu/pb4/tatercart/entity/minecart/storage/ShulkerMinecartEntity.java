@@ -4,12 +4,15 @@ import eu.pb4.tatercart.block.rail.ColoredDetectorRailBlock;
 import eu.pb4.tatercart.entity.Colorable;
 import eu.pb4.tatercart.entity.TcEntities;
 import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
+import eu.pb4.tatercart.item.ShulkerMinecartItem;
+import eu.pb4.tatercart.item.TcItems;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -25,6 +28,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implements Colorable {
     private final DefaultedList<ItemStack> inventory;
@@ -86,6 +90,16 @@ public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implement
         this.inventory.clear();
         super.dropItems(damageSource);
         this.dropStack(shulkerBox);
+    }
+
+    @Override
+    protected @Nullable Item getDropItem() {
+        return null;
+    }
+
+    @Override
+    public ItemStack getPickBlockStack() {
+        return TcItems.SHULKER_MINECART.from(this.shulkerBox.getItem().getDefaultStack());
     }
 
     @Override

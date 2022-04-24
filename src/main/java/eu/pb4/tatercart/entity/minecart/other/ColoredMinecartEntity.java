@@ -1,4 +1,4 @@
-package eu.pb4.tatercart.entity.minecart;
+package eu.pb4.tatercart.entity.minecart.other;
 
 import com.mojang.datafixers.util.Pair;
 import eu.pb4.holograms.mixin.accessors.EntityAccessor;
@@ -8,6 +8,8 @@ import eu.pb4.holograms.mixin.accessors.MobSpawnS2CPacketAccessor;
 import eu.pb4.holograms.utils.PacketHelpers;
 import eu.pb4.tatercart.entity.Colorable;
 import eu.pb4.tatercart.entity.TcEntities;
+import eu.pb4.tatercart.entity.minecart.CustomMinecartEntity;
+import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.mixin.accessor.AbstractMinecartEntityAccessor;
 import eu.pb4.tatercart.mixin.accessor.EntitySetHeadYawS2CPacketAccessor;
@@ -19,6 +21,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.EntitiesDestroyS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
@@ -31,6 +34,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -75,11 +79,13 @@ public class ColoredMinecartEntity extends CustomMinecartEntity implements Color
     }
 
     @Override
-    public void dropItems(DamageSource damageSource) {
-        super.dropItems(damageSource);
-        if (!damageSource.isExplosive() && this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-            this.dropItem(bannerBlock);
-        }
+    protected @Nullable Item getDropItem() {
+        return this.bannerBlock.asItem();
+    }
+
+    @Override
+    public ItemStack getPickBlockStack() {
+        return TcItems.COLORED_MINECART.get(this.color).getDefaultStack();
     }
 
     @Override

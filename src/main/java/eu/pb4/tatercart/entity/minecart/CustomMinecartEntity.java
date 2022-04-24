@@ -7,14 +7,19 @@ import eu.pb4.tatercart.mixin.accessor.AbstractMinecartEntityAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.server.world.EntityTrackingListener;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -49,6 +54,18 @@ public abstract class CustomMinecartEntity extends AbstractMinecartEntity implem
     protected void setVisualBlockOffset(int offset) {
         this.visualOffset = offset;
         this.markDataTrackerAsDirty();
+    }
+
+    @Nullable
+    protected abstract Item getDropItem();
+
+    @Override
+    public void dropItems(DamageSource damageSource) {
+        super.dropItems(damageSource);
+        var item = this.getDropItem();
+        if (!damageSource.isExplosive() && item != null && this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+            this.dropItem(item);
+        }
     }
 
     protected void markDataTrackerAsDirty() {
