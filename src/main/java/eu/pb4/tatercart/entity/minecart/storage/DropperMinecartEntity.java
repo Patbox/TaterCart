@@ -28,7 +28,7 @@ public class DropperMinecartEntity extends DispenserMinecartEntity {
 
     @Override
     protected @Nullable Item getDropItem() {
-        return Items.DROPPER;
+        return this.dropSplit() ? Items.DROPPER : TcItems.DROPPER_MINECART;
     }
 
     @Override

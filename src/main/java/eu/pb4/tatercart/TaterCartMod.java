@@ -12,8 +12,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 
-import java.util.ArrayList;
-
 public class TaterCartMod implements ModInitializer {
     public static final String ID = "tatercart";
     public static final boolean SHOW_MARKER = true && FabricLoader.getInstance().isDevelopmentEnvironment();
@@ -25,9 +23,14 @@ public class TaterCartMod implements ModInitializer {
     public static GameRules.Key<GameRules.BooleanRule> DEFAULT_ENHANCED
             = GameRuleRegistry.register("tatercart:default_enhanced", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(true));
 
+    public static GameRules.Key<GameRules.BooleanRule> MINECART_HIGH_SPEED_DAMAGE
+            = GameRuleRegistry.register("tatercart:minecart_high_speed_damage", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(true));
+
     public static GameRules.Key<GameRules.BooleanRule> EXTENDED_RAILS_PLACEMENT
             = GameRuleRegistry.register("tatercart:extended_rails_placement", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(true));
 
+    public static GameRules.Key<GameRules.BooleanRule> SPLIT_ITEMS
+            = GameRuleRegistry.register("tatercart:split_items", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(false));
     @Override
     public void onInitialize() {
 

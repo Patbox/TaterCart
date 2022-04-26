@@ -89,7 +89,7 @@ public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implement
         var shulkerBox = this.shulkerBox.copy();
         this.inventory.clear();
         super.dropItems(damageSource);
-        this.dropStack(shulkerBox);
+        this.dropStack(this.dropSplit() ? shulkerBox : TcItems.SHULKER_MINECART.from(shulkerBox));
     }
 
     @Override

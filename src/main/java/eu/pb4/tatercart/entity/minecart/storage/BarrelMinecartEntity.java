@@ -35,7 +35,7 @@ public class BarrelMinecartEntity extends CustomStorageMinecartEntity {
 
     @Override
     protected @Nullable Item getDropItem() {
-        return Items.BARREL;
+        return this.dropSplit() ? Items.BARREL : TcItems.BARREL_MINECART;
     }
 
     @Override

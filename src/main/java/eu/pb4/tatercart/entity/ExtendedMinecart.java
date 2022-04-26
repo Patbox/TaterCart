@@ -17,9 +17,9 @@ public interface ExtendedMinecart {
 
     BlockState tatercart_getRailBlock();
 
-    boolean tatercart_isEnchanced();
+    boolean tatercart_customPhysics();
     boolean tatercart_isYawFlipped();
-    void tatercart_setEnchanced(boolean value);
+    void tatercart_setPhysics(boolean value);
 
     static ExtendedMinecart of(AbstractMinecartEntity minecart) {
         return (ExtendedMinecart) minecart;

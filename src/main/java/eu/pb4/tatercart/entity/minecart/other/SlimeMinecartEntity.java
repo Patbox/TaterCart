@@ -37,7 +37,7 @@ public class SlimeMinecartEntity extends CustomMinecartEntity {
 
     @Override
     protected @Nullable Item getDropItem() {
-        return Items.SLIME_BLOCK;
+        return this.dropSplit() ? Items.SLIME_BLOCK : TcItems.SLIME_MINECART;
     }
 
     @Override

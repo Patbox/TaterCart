@@ -14,6 +14,7 @@ import eu.pb4.tatercart.entity.minecart.storage.DropperMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.ShulkerMinecartEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
@@ -76,9 +77,16 @@ public abstract class AbstractMinecartEntityMixin extends Entity {
                 this.tatercart_hologram.show();
             }
 
-            this.tatercart_hologram.setText(1, new LiteralText((((ExtendedMinecart) this).tatercart_isEnchanced() ? "TaterCart" : "Vanilla") + " Physics"), true);
+            this.tatercart_hologram.setText(1, new LiteralText((((ExtendedMinecart) this).tatercart_customPhysics() ? "TaterCart" : "Vanilla") + " Physics"), true);
             this.tatercart_hologram.setText(2, new LiteralText("Pos: " + this.getPos().toString()), true);
             this.tatercart_hologram.setText(3, new LiteralText("Vel: " + this.getVelocity().toString()), true);
+        }
+    }
+
+    @Inject(method = "dropItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;<init>(Lnet/minecraft/item/ItemConvertible;)V"), cancellable = true)
+    private void tatercart_dropsChange(DamageSource damageSource, CallbackInfo ci) {
+        if (!this.world.getGameRules().getBoolean(TaterCartMod.SPLIT_ITEMS)) {
+            ci.cancel();
         }
     }
 }

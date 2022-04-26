@@ -263,24 +263,24 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
     }
 
     @Override
-    public boolean tatercart_isEnchanced() {
+    public boolean tatercart_customPhysics() {
         return this.tatercart_isEnchanced;
     }
 
     @Override
-    public void tatercart_setEnchanced(boolean value) {
+    public void tatercart_setPhysics(boolean value) {
         this.tatercart_isEnchanced = value;
     }
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
     private void customPushing(CallbackInfo ci) {
-        if (this.tatercart_isEnchanced) {
+        if (this.tatercart_isEnchanced && this.world.getGameRules().getBoolean(TaterCartMod.MINECART_HIGH_SPEED_DAMAGE)) {
             var speed = this.getVelocity().horizontalLengthSquared();
-            if (speed < 1.5) {
+            if (speed < 1.4) {
                 return;
             }
 
-            var list = this.world.getOtherEntities(this, this.getBoundingBox().expand(0.98F, 0.0D, 0.98F));
+            var list = this.world.getOtherEntities(this, this.getBoundingBox().expand(0.5F, 0.5D, 0.5F));
             for (var entity : list) {
                 if (entity instanceof LivingEntity && !entity.noClip && !this.noClip && !this.getPassengerList().contains(entity) && !entity.hasVehicle()) {
                     entity.damage(DamageSource.FLY_INTO_WALL, (float) speed);

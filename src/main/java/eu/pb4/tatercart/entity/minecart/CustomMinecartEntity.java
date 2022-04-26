@@ -3,6 +3,7 @@ package eu.pb4.tatercart.entity.minecart;
 import eu.pb4.polymer.api.entity.PolymerEntity;
 import eu.pb4.polymer.api.item.PolymerItem;
 import eu.pb4.polymer.impl.interfaces.EntityAttachedPacket;
+import eu.pb4.tatercart.TaterCartMod;
 import eu.pb4.tatercart.mixin.accessor.AbstractMinecartEntityAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -135,5 +136,9 @@ public abstract class CustomMinecartEntity extends AbstractMinecartEntity implem
 
     protected BlockState getVisualState() {
         return this.visualBlock;
+    }
+
+    protected boolean dropSplit() {
+        return this.world.getGameRules().getBoolean(TaterCartMod.SPLIT_ITEMS);
     }
 }

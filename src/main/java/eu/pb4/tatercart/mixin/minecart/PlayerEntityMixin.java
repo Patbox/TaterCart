@@ -7,7 +7,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
@@ -30,8 +29,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         if (this.world instanceof ServerWorld serverWorld && entity instanceof ExtendedMinecart minecart) {
             var stack = this.getStackInHand(hand);
             if (!stack.isEmpty() && stack.isOf(TcItems.MINECART_ENHANCER)) {
-                var isEnhanced = minecart.tatercart_isEnchanced();
-                minecart.tatercart_setEnchanced(!isEnhanced);
+                var isEnhanced = minecart.tatercart_customPhysics();
+                minecart.tatercart_setPhysics(!isEnhanced);
                 serverWorld.spawnParticles(ParticleTypes.EXPLOSION, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0, 0, 0);
                 serverWorld.spawnParticles(new DustParticleEffect(isEnhanced ? new Vec3f(0.9f, 0, 0) : new Vec3f(0, 0.9f, 0), 1) , entity.getX(), entity.getY(), entity.getZ(), 20, 0.3, 0.3, 0.3, 0);
 

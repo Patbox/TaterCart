@@ -177,7 +177,7 @@ public class DispenserMinecartEntity extends CustomStorageMinecartEntity impleme
 
     @Override
     protected @Nullable Item getDropItem() {
-        return Items.DISPENSER;
+        return this.dropSplit() ? Items.DISPENSER : TcItems.DISPENSER_MINECART;
     }
 
     @Override

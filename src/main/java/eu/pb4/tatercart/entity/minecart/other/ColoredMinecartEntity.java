@@ -80,7 +80,7 @@ public class ColoredMinecartEntity extends CustomMinecartEntity implements Color
 
     @Override
     protected @Nullable Item getDropItem() {
-        return this.bannerBlock.asItem();
+        return this.dropSplit() ? this.bannerBlock.asItem() : TcItems.COLORED_MINECART.get(this.color);
     }
 
     @Override
