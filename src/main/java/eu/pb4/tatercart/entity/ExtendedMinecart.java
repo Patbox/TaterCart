@@ -8,12 +8,11 @@ public interface ExtendedMinecart {
     static boolean isYawFlipped(DispenserMinecartEntity minecart) {
         return of(minecart).tatercart_isYawFlipped();
     }
-    /*AbstractMinecartEntity getNextLinked();
-    void setNextLinked(AbstractMinecartEntity minecart);
-    AbstractMinecartEntity getPreviousLinked();
-    void setPreviousLinked(AbstractMinecartEntity minecart);
+    AbstractMinecartEntity[] tatercart_getLinked();
+    void tatercart_setLinked(AbstractMinecartEntity minecart);
+    void tatercart_removeLinked(AbstractMinecartEntity minecart);
 
-    boolean canLink();*/
+    boolean tatercart_canLink();
 
     BlockState tatercart_getRailBlock();
 

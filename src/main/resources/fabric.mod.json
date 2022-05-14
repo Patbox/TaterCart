@@ -20,17 +20,24 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "eu.pb4.tatercart.TaterCartMod"
+      "eu.pb4.tatercart.TaterCart"
+    ],
+    "fabric-datagen": [
+      "eu.pb4.tatercart.other.TcDataGenerator"
     ]
   },
   "mixins": [
     "tatercart.mixins.json"
   ],
-
+  "custom": {
+    "polydex:entry/tatercart": {
+      "icon": "minecraft:minecart"
+    }
+  },
   "depends": {
     "fabricloader": ">=0.13.3",
     "fabric": "*",
-    "minecraft": "1.18.2+",
+    "minecraft": "1.18.2",
     "java": ">=17"
   }
 }

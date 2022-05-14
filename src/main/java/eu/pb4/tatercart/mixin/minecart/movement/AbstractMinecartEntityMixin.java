@@ -1,13 +1,11 @@
 package eu.pb4.tatercart.mixin.minecart.movement;
 
-import eu.pb4.tatercart.TaterCartMod;
+import eu.pb4.tatercart.TaterCart;
 import eu.pb4.tatercart.entity.ExtendedMinecart;
+import eu.pb4.tatercart.mixin.FurnaceMinecartEntityAccessor;
 import eu.pb4.tatercart.mixin.accessor.EntityAccessor;
-import net.minecraft.block.AbstractRailBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PoweredRailBlock;
-import net.minecraft.block.SlimeBlock;
+import eu.pb4.tatercart.other.TcGameRules;
+import net.minecraft.block.*;
 import net.minecraft.block.enums.RailShape;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -15,12 +13,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.entity.vehicle.FurnaceMinecartEntity;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,21 +28,25 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.UUID;
+
 @Mixin(AbstractMinecartEntity.class)
 public abstract class AbstractMinecartEntityMixin extends Entity implements ExtendedMinecart {
-    @Unique
-    private AbstractMinecartEntity nextLinkedMinecart = null;
-    @Unique
-    private AbstractMinecartEntity previousLinkedMinecart = null;
     @Unique
     private BlockState tatercart_lastRailBlockState = null;
     @Unique
     private BlockPos tatercart_lastRailBlockPos = null;
     @Unique
     private double tatercart_currentOffset = 0;
-
     @Unique
     private boolean tatercart_isEnchanced = false;
+    @Unique
+    private final AbstractMinecartEntity[] tatercart_linkedMinecart = new AbstractMinecartEntity[2];
+    @Unique
+    private UUID[] tatercart_linkedMinecartUuidTemp = null;
+
+    @Shadow
+    private boolean yawFlipped;
 
     public AbstractMinecartEntityMixin(net.minecraft.entity.EntityType<?> type, net.minecraft.world.World world) {
         super(type, world);
@@ -57,11 +58,11 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
     @Shadow
     public abstract Direction getMovementDirection();
 
-    @Shadow private boolean yawFlipped;
+    @Shadow public abstract boolean damage(DamageSource source, float amount);
 
     @Inject(method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;)V", at = @At("TAIL"))
     private void tatercraft_setDefaultEnhanced(EntityType entityType, World world, CallbackInfo ci) {
-        this.tatercart_isEnchanced = world.getGameRules().getBoolean(TaterCartMod.DEFAULT_ENHANCED);
+        this.tatercart_isEnchanced = world.getGameRules().getBoolean(TcGameRules.DEFAULT_ENHANCED);
     }
 
     @Inject(method = "getMaxOffRailSpeed", at = @At("HEAD"), cancellable = true)
@@ -116,7 +117,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
 
     @Redirect(method = "moveOnRail", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V", ordinal = 0))
     private void tatercart_bounceBeforeMoving(AbstractMinecartEntity abstractMinecartEntity, MovementType movementType, Vec3d movement) {
-        if (this.tatercart_isEnchanced) {
+        if (this.tatercart_isEnchanced && !this.world.isClient) {
             var ad = ((EntityAccessor) this.asEntity()).callAdjustMovementForCollisions(movement);
             var pos = this.asEntity().getPos();
             var deltaX = this.asEntity().getPos().x + ad.x;
@@ -144,7 +145,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
 
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/vehicle/AbstractMinecartEntity;setPitch(F)V", ordinal = 1))
     private void tatercart_changePitch(AbstractMinecartEntity minecartEntity, float pitch) {
-        if (this.tatercart_isEnchanced) {
+        if (this.tatercart_isEnchanced && !this.world.isClient) {
             var i = this.getMovementDirection().getDirection().offset();
 
             var value = (float) (i * this.getVelocity().y * 90 * -this.getHorizontalFacing().rotateYClockwise().getDirection().offset());
@@ -219,43 +220,95 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
     private void tatercart_saveData(NbtCompound nbt, CallbackInfo ci) {
-        nbt.putBoolean("tatercart:enchanced", this.tatercart_isEnchanced);
+        nbt.putBoolean(TaterCart.ID + ":enchanced_physics", this.tatercart_isEnchanced);
+        if (this.tatercart_linkedMinecart[0] != null) {
+            nbt.putUuid(TaterCart.ID + ":linked_carts/0", this.tatercart_linkedMinecart[0].getUuid());
+        } else if (this.tatercart_linkedMinecart[1] != null) {
+            nbt.putUuid(TaterCart.ID + ":linked_carts/1", this.tatercart_linkedMinecart[1].getUuid());
+        } else if (this.tatercart_linkedMinecartUuidTemp != null) {
+            if (this.tatercart_linkedMinecartUuidTemp.length > 0 && this.tatercart_linkedMinecartUuidTemp[0] != null) {
+                nbt.putUuid(TaterCart.ID + ":linked_carts/0", this.tatercart_linkedMinecartUuidTemp[0]);
+            } else if (this.tatercart_linkedMinecartUuidTemp.length > 1 && this.tatercart_linkedMinecartUuidTemp[1] != null) {
+                nbt.putUuid(TaterCart.ID + ":linked_carts/1", this.tatercart_linkedMinecartUuidTemp[1]);
+            }
+        }
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
     private void tatercart_readData(NbtCompound nbt, CallbackInfo ci) {
-        this.tatercart_isEnchanced = nbt.getBoolean("tatercart:enchanced");
+        this.tatercart_isEnchanced = nbt.getBoolean(TaterCart.ID + ":enchanced_physics");
+        this.tatercart_linkedMinecartUuidTemp = new UUID[2];
+
+        if (nbt.contains(TaterCart.ID + ":linked_carts/0")) {
+            this.tatercart_linkedMinecartUuidTemp[0] = nbt.getUuid(TaterCart.ID + ":linked_carts/0");
+        }
+
+        if (nbt.contains(TaterCart.ID + ":linked_carts/1")) {
+            this.tatercart_linkedMinecartUuidTemp[1] = nbt.getUuid(TaterCart.ID + ":linked_carts/1");
+        }
     }
 
-    /*@Inject(method = "tick", at = @At("HEAD"))
-    private void handleLinkedCarts(CallbackInfo ci) {
-        var nextLinked = this.getNextLinked();
-        var previousLinked = this.getPreviousLinked();
-
-        AbstractMinecartEntity cart = nextLinked;
-
-        if (previousLinked != null && !previousLinked.isAlive()) {
-            this.setPreviousLinked(null);
-            previousLinked = null;
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void tatercart_handleLinkedCarts(CallbackInfo ci) {
+        if (!(this.world instanceof ServerWorld world)) {
+            return;
         }
 
-        if (nextLinked != null && previousLinked != null
-                && nextLinked.getVelocity().lengthSquared() < previousLinked.getVelocity().lengthSquared()) {
-            this.setNextLinked(previousLinked);
-            this.setPreviousLinked(nextLinked);
-            cart = previousLinked;
+        if (this.tatercart_linkedMinecartUuidTemp != null) {
+            if (this.tatercart_linkedMinecartUuidTemp[0] != null && world.getEntity(this.tatercart_linkedMinecartUuidTemp[0]) instanceof AbstractMinecartEntity minecart) {
+                this.tatercart_linkedMinecart[0] = minecart;
+            }
+
+            if (this.tatercart_linkedMinecartUuidTemp[1] != null && world.getEntity(this.tatercart_linkedMinecartUuidTemp[1]) instanceof AbstractMinecartEntity minecart) {
+                this.tatercart_linkedMinecart[1] = minecart;
+            }
+
+            this.tatercart_linkedMinecartUuidTemp = null;
         }
 
-        if (cart != null) {
-            var relVec = this.getPos().relativize(cart.getPos());
+        if (this.world.getGameRules().getBoolean(TcGameRules.MINECART_LINKING) && this.tatercart_isEnchanced) {
+            AbstractMinecartEntity mainCart = null;
 
-            if (!cart.isAlive() || relVec.lengthSquared() > 16) {
-                this.setNextLinked(null);
-            } else {
-                CartUtil.setVelocityForLink(this.asEntity(), cart);
+            for (var cart : this.tatercart_linkedMinecart) {
+                if (cart != null) {
+                    if (cart.distanceTo(this) > 5 || cart.isRemoved()) {
+                        ExtendedMinecart.of(cart).tatercart_removeLinked(this.asEntity());
+                        this.tatercart_removeLinked(cart);
+                        this.dropItem(Items.CHAIN);
+                        continue;
+                    }
+                    if (((mainCart == null && this.getVelocity().horizontalLengthSquared() <= cart.getVelocity().horizontalLengthSquared())
+                            || (mainCart != null && mainCart.getVelocity().horizontalLengthSquared() < cart.getVelocity().horizontalLengthSquared()))
+                            && !(mainCart instanceof FurnaceMinecartEntity)
+                    ) {
+                        mainCart = cart;
+                    }
+                }
+            }
+
+            if (mainCart != null) {
+                var distance = this.distanceTo(mainCart);
+                var dir = mainCart.getPos().subtract(this.getPos()).add(this.getVelocity()).normalize();
+
+                if (distance > 1.6) {
+                    if (!(this.asEntity() instanceof FurnaceMinecartEntity furnaceMinecart && ((FurnaceMinecartEntityAccessor) furnaceMinecart).callIsLit())) {
+                        if (mainCart.getVelocity().horizontalLengthSquared() != 0) {
+                            var vel = dir.multiply(mainCart.getVelocity().horizontalLength()).multiply(distance - 0.8);
+                            this.setVelocity(vel.x, this.getVelocity().y, vel.z);
+                        } else {
+                            var vel = dir.multiply(0.05);
+                            this.setVelocity(vel.x, this.getVelocity().y, vel.z);
+                        }
+                    }
+                } else if (this.getBoundingBox().intersects(mainCart.getBoundingBox()) || distance < 1.4) {
+                    var vel = dir.multiply(-1.4 + distance).multiply(0.1);
+                    this.setVelocity(vel.x, this.getVelocity().y, vel.z);
+                } else {
+                    this.setVelocity(this.getVelocity().multiply(0.9, 1, 0.9));
+                }
             }
         }
-    }*/
+    }
 
     @Override
     public BlockState tatercart_getRailBlock() {
@@ -270,11 +323,26 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
     @Override
     public void tatercart_setPhysics(boolean value) {
         this.tatercart_isEnchanced = value;
+
+        if (!value) {
+            for (var cart : this.tatercart_linkedMinecart) {
+                if (cart != null) {
+                    ExtendedMinecart.of(cart).tatercart_removeLinked(this.asEntity());
+                }
+            }
+        }
+    }
+
+    @Inject(method = "collidesWith", at = @At("HEAD"), cancellable = true)
+    private void tatercart_collidesWith(Entity other, CallbackInfoReturnable<Boolean> cir) {
+        if (this.tatercart_isEnchanced && other instanceof AbstractMinecartEntity) {
+            cir.setReturnValue(!(this.tatercart_linkedMinecart[0] == other || this.tatercart_linkedMinecart[1] == other));
+        }
     }
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
-    private void customPushing(CallbackInfo ci) {
-        if (this.tatercart_isEnchanced && this.world.getGameRules().getBoolean(TaterCartMod.MINECART_HIGH_SPEED_DAMAGE)) {
+    private void tatercart_customPushing(CallbackInfo ci) {
+        if (this.tatercart_isEnchanced && this.world.getGameRules().getBoolean(TcGameRules.MINECART_HIGH_SPEED_DAMAGE)) {
             var speed = this.getVelocity().horizontalLengthSquared();
             if (speed < 1.4) {
                 return;
@@ -290,30 +358,50 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
         }
     }
 
-    /*@Override
-    public AbstractMinecartEntity getNextLinked() {
-        return this.nextLinkedMinecart;
+    @Inject(method = "applySlowdown", at = @At("HEAD"), cancellable = true)
+    private void tatercart_changeMaxSpeedToNormal(CallbackInfo ci) {
+        if (this.tatercart_isEnchanced && (this.tatercart_linkedMinecart[0] != null || this.tatercart_linkedMinecart[1] != null)) {
+            Vec3d vec3d = this.getVelocity();
+            vec3d = vec3d.multiply(0.997D, 0.0D, 0.997D);
+            if (this.isTouchingWater()) {
+                vec3d = vec3d.multiply(0.949999988079071D);
+            }
+
+            this.setVelocity(vec3d);
+            ci.cancel();
+        }
     }
 
     @Override
-    public void setNextLinked(AbstractMinecartEntity minecart) {
-        this.nextLinkedMinecart = minecart;
+    public AbstractMinecartEntity[] tatercart_getLinked() {
+        return this.tatercart_linkedMinecart;
     }
 
     @Override
-    public AbstractMinecartEntity getPreviousLinked() {
-        return this.previousLinkedMinecart;
+    public void tatercart_setLinked(AbstractMinecartEntity minecart) {
+        if (minecart == this.asEntity()) {
+            return;
+        }
+        if (this.tatercart_linkedMinecart[0] == null) {
+            this.tatercart_linkedMinecart[0] = minecart;
+        } else if (this.tatercart_linkedMinecart[1] == null) {
+            this.tatercart_linkedMinecart[1] = minecart;
+        }
     }
 
     @Override
-    public void setPreviousLinked(AbstractMinecartEntity minecart) {
-        this.previousLinkedMinecart = minecart;
+    public void tatercart_removeLinked(AbstractMinecartEntity minecart) {
+        if (this.tatercart_linkedMinecart[0] == minecart) {
+            this.tatercart_linkedMinecart[0] = null;
+        } else if (this.tatercart_linkedMinecart[1] == minecart) {
+            this.tatercart_linkedMinecart[1] = null;
+        }
     }
 
     @Override
-    public boolean canLink() {
-        return true;
-    }*/
+    public boolean tatercart_canLink() {
+        return this.tatercart_isEnchanced && (this.tatercart_linkedMinecart[0] == null || this.tatercart_linkedMinecart[1] == null);
+    }
 
     @Override
     public boolean tatercart_isYawFlipped() {

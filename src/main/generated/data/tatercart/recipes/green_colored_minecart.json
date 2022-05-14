@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:minecart"
+    },
+    {
+      "item": "minecraft:green_banner"
+    }
+  ],
+  "result": {
+    "item": "tatercart:green_colored_minecart"
+  }
+}

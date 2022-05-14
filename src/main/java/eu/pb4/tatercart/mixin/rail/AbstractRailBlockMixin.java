@@ -1,6 +1,6 @@
 package eu.pb4.tatercart.mixin.rail;
 
-import eu.pb4.tatercart.TaterCartMod;
+import eu.pb4.tatercart.other.TcGameRules;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -18,14 +18,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class AbstractRailBlockMixin{
     @Inject(method = "canPlaceAt", at = @At("HEAD"), cancellable = true)
     private void tatercart_changePlaceCheck(BlockState state, WorldView world, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (world instanceof World world1 ? world1.getGameRules().getBoolean(TaterCartMod.EXTENDED_RAILS_PLACEMENT) : true) {
+        if (world instanceof World world1 ? world1.getGameRules().getBoolean(TcGameRules.EXTENDED_RAILS_PLACEMENT) : true) {
             cir.setReturnValue(Block.sideCoversSmallSquare(world, pos.down(), Direction.UP));
         }
     }
 
     @Inject(method = "shouldDropRail", at = @At("HEAD"), cancellable = true)
     private static void tatercart_changeDropCheck(BlockPos pos, World world, RailShape shape, CallbackInfoReturnable<Boolean> cir) {
-        if (world.getGameRules().getBoolean(TaterCartMod.EXTENDED_RAILS_PLACEMENT)) {
+        if (world.getGameRules().getBoolean(TcGameRules.EXTENDED_RAILS_PLACEMENT)) {
             cir.setReturnValue(!Block.sideCoversSmallSquare(world, pos.down(), Direction.UP));
         }
     }

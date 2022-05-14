@@ -1,6 +1,6 @@
 package eu.pb4.tatercart.mixin.minecart.drops;
 
-import eu.pb4.tatercart.TaterCartMod;
+import eu.pb4.tatercart.other.TcGameRules;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.FurnaceMinecartEntity;
@@ -19,7 +19,7 @@ public abstract class FurnaceMinecartEntityMixin extends Entity {
 
     @ModifyArg(method = "dropItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/vehicle/FurnaceMinecartEntity;dropItem(Lnet/minecraft/item/ItemConvertible;)Lnet/minecraft/entity/ItemEntity;"))
     private ItemConvertible tatercart_dropsChange(ItemConvertible par1) {
-        if (this.world.getGameRules().getBoolean(TaterCartMod.SPLIT_ITEMS)) {
+        if (this.world.getGameRules().getBoolean(TcGameRules.SPLIT_ITEMS)) {
             return par1;
         }
         return Items.FURNACE_MINECART;

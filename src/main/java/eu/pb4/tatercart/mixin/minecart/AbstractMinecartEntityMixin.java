@@ -2,16 +2,17 @@ package eu.pb4.tatercart.mixin.minecart;
 
 import eu.pb4.holograms.api.elements.SpacingHologramElement;
 import eu.pb4.holograms.api.holograms.EntityHologram;
-import eu.pb4.tatercart.TaterCartMod;
+import eu.pb4.tatercart.TaterCart;
 import eu.pb4.tatercart.entity.ExtendedMinecart;
 import eu.pb4.tatercart.entity.TcEntities;
-import eu.pb4.tatercart.entity.minecart.storage.BarrelMinecartEntity;
-import eu.pb4.tatercart.entity.minecart.other.ColoredMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
+import eu.pb4.tatercart.entity.minecart.other.ColoredMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.other.SlimeMinecartEntity;
+import eu.pb4.tatercart.entity.minecart.storage.BarrelMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.DispenserMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.DropperMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.ShulkerMinecartEntity;
+import eu.pb4.tatercart.other.TcGameRules;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
@@ -65,7 +66,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity {
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tatercart_tick(CallbackInfo ci) {
-        if (TaterCartMod.SHOW_MARKER) {
+        if (TaterCart.SHOW_MARKER) {
             if (this.tatercart_hologram == null) {
                 this.tatercart_hologram = new EntityHologram(this, Vec3d.ZERO);
                 this.tatercart_hologram.setText(0, new LiteralText("" + Registry.ENTITY_TYPE.getId(this.getType())), true);
@@ -85,7 +86,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity {
 
     @Inject(method = "dropItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;<init>(Lnet/minecraft/item/ItemConvertible;)V"), cancellable = true)
     private void tatercart_dropsChange(DamageSource damageSource, CallbackInfo ci) {
-        if (!this.world.getGameRules().getBoolean(TaterCartMod.SPLIT_ITEMS)) {
+        if (!this.world.getGameRules().getBoolean(TcGameRules.SPLIT_ITEMS)) {
             ci.cancel();
         }
     }

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:minecart"
+    },
+    {
+      "item": "minecraft:slime_block"
+    }
+  ],
+  "result": {
+    "item": "tatercart:slime_minecart"
+  }
+}

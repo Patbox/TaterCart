@@ -46,17 +46,21 @@ public abstract class CustomStorageMinecartEntity extends CustomMinecartEntity i
 
     @Override
     protected void applySlowdown() {
-        float f = 0.98F;
-        if (this.lootTableId == null) {
-            int i = 15 - ScreenHandler.calculateComparatorOutput(this);
-            f += (float) i * 0.001F;
-        }
+        if (this.asExtended().tatercart_customPhysics() && (this.asExtended().tatercart_getLinked()[0] != null || this.asExtended().tatercart_getLinked()[1] != null)) {
+            super.applySlowdown();
+        } else {
+            float f = 0.98F;
+            if (this.lootTableId == null) {
+                int i = 15 - ScreenHandler.calculateComparatorOutput(this);
+                f += (float) i * 0.001F;
+            }
 
-        if (this.isTouchingWater()) {
-            f *= 0.95F;
-        }
+            if (this.isTouchingWater()) {
+                f *= 0.95F;
+            }
 
-        this.setVelocity(this.getVelocity().multiply(f, 0.0D, f));
+            this.setVelocity(this.getVelocity().multiply(f, 0.0D, f));
+        }
     }
 
     public void generateLoot(@Nullable PlayerEntity player) {

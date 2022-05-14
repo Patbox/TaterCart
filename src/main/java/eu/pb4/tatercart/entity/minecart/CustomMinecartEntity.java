@@ -1,20 +1,17 @@
 package eu.pb4.tatercart.entity.minecart;
 
 import eu.pb4.polymer.api.entity.PolymerEntity;
-import eu.pb4.polymer.api.item.PolymerItem;
 import eu.pb4.polymer.impl.interfaces.EntityAttachedPacket;
-import eu.pb4.tatercart.TaterCartMod;
+import eu.pb4.tatercart.entity.ExtendedMinecart;
 import eu.pb4.tatercart.mixin.accessor.AbstractMinecartEntityAccessor;
+import eu.pb4.tatercart.other.TcGameRules;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.server.world.EntityTrackingListener;
 import net.minecraft.util.math.MathHelper;
@@ -139,6 +136,10 @@ public abstract class CustomMinecartEntity extends AbstractMinecartEntity implem
     }
 
     protected boolean dropSplit() {
-        return this.world.getGameRules().getBoolean(TaterCartMod.SPLIT_ITEMS);
+        return this.world.getGameRules().getBoolean(TcGameRules.SPLIT_ITEMS);
+    }
+
+    protected ExtendedMinecart asExtended() {
+        return ExtendedMinecart.of(this);
     }
 }

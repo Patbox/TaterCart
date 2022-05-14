@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:minecart"
+    },
+    {
+      "item": "minecraft:dispenser"
+    }
+  ],
+  "result": {
+    "item": "tatercart:dispenser_minecart"
+  }
+}

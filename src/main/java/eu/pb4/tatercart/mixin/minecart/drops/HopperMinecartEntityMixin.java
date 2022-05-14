@@ -1,10 +1,9 @@
 package eu.pb4.tatercart.mixin.minecart.drops;
 
 
-import eu.pb4.tatercart.TaterCartMod;
+import eu.pb4.tatercart.other.TcGameRules;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.entity.vehicle.ChestMinecartEntity;
 import net.minecraft.entity.vehicle.HopperMinecartEntity;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
@@ -21,7 +20,7 @@ public abstract class HopperMinecartEntityMixin extends AbstractMinecartEntity {
 
     @ModifyArg(method = "dropItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/vehicle/HopperMinecartEntity;dropItem(Lnet/minecraft/item/ItemConvertible;)Lnet/minecraft/entity/ItemEntity;"))
     private ItemConvertible tatercart_dropsChange(ItemConvertible par1) {
-        if (this.world.getGameRules().getBoolean(TaterCartMod.SPLIT_ITEMS)) {
+        if (this.world.getGameRules().getBoolean(TcGameRules.SPLIT_ITEMS)) {
             return par1;
         }
         return Items.HOPPER;

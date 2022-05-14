@@ -4,7 +4,6 @@ import eu.pb4.tatercart.block.rail.ColoredDetectorRailBlock;
 import eu.pb4.tatercart.entity.Colorable;
 import eu.pb4.tatercart.entity.TcEntities;
 import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
-import eu.pb4.tatercart.item.ShulkerMinecartItem;
 import eu.pb4.tatercart.item.TcItems;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -17,16 +16,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
-import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +48,6 @@ public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implement
         if (stack.hasNbt() && stack.getNbt().contains("BlockEntityTag", NbtElement.COMPOUND_TYPE)) {
             Inventories.readNbt(stack.getNbt().getCompound("BlockEntityTag"), this.inventory);
         }
-
         this.setVisualBlockState(((BlockItem) stack.getItem()).getBlock().getDefaultState());
     }
 
@@ -66,7 +60,10 @@ public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implement
     @Override
     protected void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
-        this.setShulkerBox(ItemStack.fromNbt(nbt.getCompound("ShukerBox")));
+        var stack = ItemStack.fromNbt(nbt.getCompound("ShukerBox"));
+        if (!stack.isEmpty()) {
+            this.setShulkerBox(stack);
+        }
     }
 
     @Override
