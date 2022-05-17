@@ -77,7 +77,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
                 }
             }
 
-            cir.setReturnValue((this.asEntity().isTouchingWater() ? 4.0 : 8.0) / (isOnCurved ? 24 : 16.0));
+            cir.setReturnValue((this.asEntity().isTouchingWater() ? 4.0 : 8.0) / (isOnCurved ? 24 : 15.0));
         }
     }
 
