@@ -1,45 +1,32 @@
 package eu.pb4.tatercart.block.rail;
 
 import eu.pb4.polymer.api.block.PolymerBlock;
-import eu.pb4.tatercart.entity.minecart.other.ColoredMinecartEntity;
+import eu.pb4.tatercart.entity.Colorable;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.DetectorRailBlock;
 import net.minecraft.entity.Entity;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Predicate;
 
-public class ColoredDetectorRailBlock extends DetectorRailBlock implements PolymerBlock {
+public class ColoredDetectorRailBlock extends DetectorRailBlock implements PolymerBlock, CustomDetectorRail {
     private static Map<DyeColor, Predicate<? super Entity>> ENTITY_COLOR_PREDICATE = new Object2ObjectOpenHashMap<>();
     private static Map<Block, DyeColor> COLORS = new Object2ObjectOpenHashMap<>();
 
     public ColoredDetectorRailBlock(Settings settings) {
         super(settings);
-    }
-
-    @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        var color = getColorOf(world.getBlockState(pos.down()));
-        if (color != null) {
-            world.spawnParticles(new DustParticleEffect(new Vec3f(color.getColorComponents()[0], color.getColorComponents()[1], color.getColorComponents()[2]), 0.4f), pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 1, 0.01, 0.01, 0.01, 0.1);
-        }
-    }
-
-    @Override
-    public boolean hasRandomTicks(BlockState state) {
-        return true;
     }
 
     @Nullable
@@ -75,6 +62,17 @@ public class ColoredDetectorRailBlock extends DetectorRailBlock implements Polym
     }
 
     private static Predicate<? super Entity> createPredicate(DyeColor dyeColor) {
-        return (e) -> e instanceof ColoredMinecartEntity entity && entity.getColor() == dyeColor;
+        return (e) -> e instanceof Colorable entity && entity.getColor() == dyeColor;
+    }
+
+    @Override
+    public List<?> getCartsCustom(World world, BlockPos pos, Class<?> entityClass, Predicate<Entity> entityPredicate) {
+        if (entityClass == AbstractMinecartEntity.class) {
+            var color = ColoredDetectorRailBlock.getColorOf(world.getBlockState(pos.down()));
+
+            return world.getEntitiesByClass(AbstractMinecartEntity.class, CustomDetectorRail.getCartDetectionBox(pos), entityPredicate.and(ColoredDetectorRailBlock.isColor(color)));
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

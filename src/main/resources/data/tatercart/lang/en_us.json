@@ -1,5 +1,6 @@
 {
-  "block.tatercart.colored_detector_rail": "Colored Detector Rail",
+  "block.tatercart.colored_detector_rail": "Color Detector Rail",
+  "block.tatercart.pattern_detector_rail": "Pattern Detector Rail",
   "block.tatercart.always_powered_rail": "Always Powered Rail",
   "item.tatercart.white_colored_minecart": "White Colored Minecart",
   "item.tatercart.cyan_colored_minecart": "Cyan Colored Minecart",

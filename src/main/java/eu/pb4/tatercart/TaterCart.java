@@ -4,6 +4,7 @@ import eu.pb4.tatercart.block.TcBlocks;
 import eu.pb4.tatercart.entity.TcEntities;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.other.TcGameRules;
+import eu.pb4.tatercart.other.TcShulkerPlacingBehaviour;
 import eu.pb4.tatercart.recipes.ShulkerMinecartRecipe;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -23,6 +24,9 @@ public class TaterCart implements ModInitializer {
         TcItems.register();
         TcEntities.register();
         TcGameRules.register();
+
+        // Replace shulker placing behaviour
+        TcShulkerPlacingBehaviour.register();
 
         Registry.register(Registry.RECIPE_SERIALIZER, id("shulker_minecart_recipe"), ShulkerMinecartRecipe.SERIALIZER);
     }

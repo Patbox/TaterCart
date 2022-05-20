@@ -23,6 +23,6 @@ public abstract class HopperMinecartEntityMixin extends AbstractMinecartEntity {
         if (this.world.getGameRules().getBoolean(TcGameRules.SPLIT_ITEMS)) {
             return par1;
         }
-        return Items.HOPPER;
+        return Items.HOPPER_MINECART;
     }
 }

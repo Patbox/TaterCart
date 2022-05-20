@@ -7,8 +7,10 @@ import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
 import eu.pb4.tatercart.item.TcItems;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -18,6 +20,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.DyeColor;
@@ -60,7 +63,7 @@ public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implement
     @Override
     protected void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
-        var stack = ItemStack.fromNbt(nbt.getCompound("ShukerBox"));
+        var stack = ItemStack.fromNbt(nbt.getCompound("ShulkerBox"));
         if (!stack.isEmpty()) {
             this.setShulkerBox(stack);
         }
@@ -69,6 +72,29 @@ public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implement
     @Override
     public void markDirty() {
         Inventories.writeNbt(this.shulkerBox.getOrCreateSubNbt("BlockEntityTag"), this.inventory);
+    }
+
+    @Override
+    public void onActivatorRail(int x, int y, int z, boolean powered) {
+        if (powered && this.world instanceof ServerWorld world) {
+            var stack = this.shulkerBox;
+            this.shulkerBox = ItemStack.EMPTY;
+            this.inventory.clear();
+
+            var nbtCopy = this.writeNbt(new NbtCompound());
+            this.remove(RemovalReason.DISCARDED);
+
+            var minecart = new MinecartEntity(EntityType.MINECART, world);
+            minecart.readNbt(nbtCopy);
+            world.tryLoadEntity(minecart);
+
+            if (!stack.isEmpty()) {
+                ItemEntity itemEntity = new ItemEntity(this.world, this.getX(), this.getY() + this.getHeight() / 2, this.getZ(), stack);
+                itemEntity.setVelocity(minecart.getVelocity().multiply(0.2));
+                itemEntity.setToDefaultPickupDelay();
+                this.world.spawnEntity(itemEntity);
+            }
+        }
     }
 
     @Override

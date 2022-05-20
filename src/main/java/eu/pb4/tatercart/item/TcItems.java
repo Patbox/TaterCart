@@ -5,7 +5,6 @@ import eu.pb4.tatercart.block.TcBlocks;
 import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
 import eu.pb4.tatercart.other.TcDataGenerator;
 import net.minecraft.advancement.criterion.InventoryChangedCriterion;
-import net.minecraft.block.BannerBlock;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Item;
@@ -16,6 +15,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +42,7 @@ public final class TcItems {
 
     public static final Item ALWAYS_POWERED_RAIL = new GlowingBlockItem(TcBlocks.ALWAYS_POWERED_RAIL, Items.POWERED_RAIL, new Item.Settings().group(ITEM_GROUP));
     public static final Item COLORED_DETECTOR_RAIL = new GlowingBlockItem(TcBlocks.COLORED_DETECTOR_RAIL, Items.DETECTOR_RAIL, new Item.Settings().group(ITEM_GROUP));
+    public static final Item PATTERN_DETECTOR_RAIL = new GlowingBlockItem(TcBlocks.PATTERN_DETECTOR_RAIL, Items.DETECTOR_RAIL, new Item.Settings().group(ITEM_GROUP));
 
     public static final CustomMinecartItem SLIME_MINECART = new CustomMinecartItem(CustomMinecartType.SLIME, Items.MINECART);
     public static final CustomMinecartItem BARREL_MINECART = new CustomMinecartItem(CustomMinecartType.BARREL, Items.CHEST_MINECART);
@@ -55,6 +56,7 @@ public final class TcItems {
         register("minecart_connecting_chain", MINECART_CONNECTOR);
         register("always_powered_rail", ALWAYS_POWERED_RAIL);
         register("colored_detector_rail", COLORED_DETECTOR_RAIL);
+        register("pattern_detector_rail", PATTERN_DETECTOR_RAIL);
 
         register("slime_minecart", SLIME_MINECART);
         register("barrel_minecart", BARREL_MINECART);
@@ -81,6 +83,7 @@ public final class TcItems {
         builder.createShapeless(MINECART_ENHANCER, 1, new Object[]{ Items.REDSTONE, Items.RAIL }, hasMinecart);
         builder.createShapeless(ALWAYS_POWERED_RAIL, 1, new Object[]{ Items.RAIL, Items.REDSTONE_BLOCK }, hasMinecart);
         builder.createShapeless(COLORED_DETECTOR_RAIL, 1, new Object[]{ Items.RAIL, Items.REDSTONE, Items.SPIDER_EYE }, hasMinecart);
+        builder.createShapeless(PATTERN_DETECTOR_RAIL, 1, new Object[]{ COLORED_DETECTOR_RAIL, Items.COPPER_INGOT, Items.COPPER_INGOT, Items.AMETHYST_SHARD, Items.AMETHYST_SHARD }, hasMinecart);
 
         builder.createShapeless(SLIME_MINECART, 1, new Object[]{ Items.MINECART, Items.SLIME_BLOCK }, hasMinecart);
         builder.createShapeless(BARREL_MINECART, 1, new Object[]{ Items.MINECART, Items.BARREL }, hasMinecart);
@@ -88,7 +91,7 @@ public final class TcItems {
         builder.createShapeless(DROPPER_MINECART, 1, new Object[]{ Items.MINECART, Items.DROPPER }, hasMinecart);
 
         for (var entry : COLORED_MINECART.entrySet()) {
-            builder.createShapeless(entry.getValue(), 1, new Object[]{ Items.MINECART, BannerBlock.getForColor(entry.getKey()).asItem() }, hasMinecart);
+            builder.createShapeless(entry.getValue(), 1, new Object[]{ Items.MINECART, Registry.ITEM.get(new Identifier(entry.getKey().getName() + "_wool")) }, hasMinecart);
         }
     }
 }
