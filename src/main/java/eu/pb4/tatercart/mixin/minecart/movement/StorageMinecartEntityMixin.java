@@ -18,7 +18,7 @@ public abstract class StorageMinecartEntityMixin extends AbstractMinecartEntity 
 
     @Inject(method = "applySlowdown", at = @At("HEAD"), cancellable = true)
     private void tatercart_changeMaxSpeedToNormal(CallbackInfo ci) {
-        if (this.tatercart_customPhysics() && (this.tatercart_getLinked()[0] != null || this.tatercart_getLinked()[1] != null)) {
+        if (this.tatercart_hasCustomPhysics() && (this.tatercart_getLinked()[0] != null || this.tatercart_getLinked()[1] != null)) {
             super.applySlowdown();
             ci.cancel();
         }

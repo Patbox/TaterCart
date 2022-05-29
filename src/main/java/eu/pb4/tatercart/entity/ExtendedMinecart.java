@@ -16,11 +16,21 @@ public interface ExtendedMinecart {
 
     BlockState tatercart_getRailBlock();
 
-    boolean tatercart_customPhysics();
+    boolean tatercart_hasCustomPhysics();
     boolean tatercart_isYawFlipped();
     void tatercart_setPhysics(boolean value);
 
     static ExtendedMinecart of(AbstractMinecartEntity minecart) {
         return (ExtendedMinecart) minecart;
+    }
+
+    void tatercart_setCanLink(boolean value);
+    double tatercart_getSpeed();
+    void tatercart_setSpeed(double value);
+    boolean tatercart_getBrakes();
+    void tatercart_setBrakes(boolean value);
+
+    default AbstractMinecartEntity tatercart_asEntity() {
+        return (AbstractMinecartEntity) this;
     }
 }

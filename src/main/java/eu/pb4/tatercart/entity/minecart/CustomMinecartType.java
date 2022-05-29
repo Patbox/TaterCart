@@ -16,4 +16,6 @@ public class CustomMinecartType {
     public static AbstractMinecartEntity.Type DISPENSER;
     public static AbstractMinecartEntity.Type DROPPER;
     public static BiMap<DyeColor, AbstractMinecartEntity.Type> COLORED = HashBiMap.create();
+    public static AbstractMinecartEntity.Type POCKET;
+
 }

@@ -5,23 +5,16 @@ import eu.pb4.tatercart.block.TcBlocks;
 import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
 import eu.pb4.tatercart.other.TcDataGenerator;
 import net.minecraft.advancement.criterion.InventoryChangedCriterion;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -30,35 +23,37 @@ import static eu.pb4.tatercart.TaterCart.id;
 public final class TcItems {
     public static final PolymerItemGroup ITEM_GROUP = PolymerItemGroup.create(id("general"), new LiteralText("TaterCart")).setIcon(() -> new ItemStack(Items.MINECART));
 
-    public static final Item MINECART_ENHANCER = new GlowingItem(new Item.Settings().maxCount(1).group(ITEM_GROUP), Items.REDSTONE)  {
-        @Override
-        public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-            tooltip.add(new TranslatableText("item.tatercart.minecart_enhancer.desc.1").formatted(Formatting.GRAY));
-            tooltip.add(new TranslatableText("item.tatercart.minecart_enhancer.desc.2").formatted(Formatting.GRAY));
-        }
-    };
+    public static final Item MINECART_CONFIGURATION_TOOL = new MinecartConfigurationToolItem(new Item.Settings().maxCount(1).group(ITEM_GROUP));
 
     public static final Item MINECART_CONNECTOR = new ConnectorChainItem(new Item.Settings().maxCount(64));
 
     public static final Item ALWAYS_POWERED_RAIL = new GlowingBlockItem(TcBlocks.ALWAYS_POWERED_RAIL, Items.POWERED_RAIL, new Item.Settings().group(ITEM_GROUP));
     public static final Item COLORED_DETECTOR_RAIL = new GlowingBlockItem(TcBlocks.COLORED_DETECTOR_RAIL, Items.DETECTOR_RAIL, new Item.Settings().group(ITEM_GROUP));
     public static final Item PATTERN_DETECTOR_RAIL = new GlowingBlockItem(TcBlocks.PATTERN_DETECTOR_RAIL, Items.DETECTOR_RAIL, new Item.Settings().group(ITEM_GROUP));
+    public static final Item CONFIGURING_RAIL = new GlowingBlockItem(TcBlocks.CONFIGURING_RAIL, Items.ACTIVATOR_RAIL, new Item.Settings().group(ITEM_GROUP));
 
     public static final CustomMinecartItem SLIME_MINECART = new CustomMinecartItem(CustomMinecartType.SLIME, Items.MINECART);
+    public static final CustomMinecartItem POCKET_MINECART = new PocketMinecartItem();
     public static final CustomMinecartItem BARREL_MINECART = new CustomMinecartItem(CustomMinecartType.BARREL, Items.CHEST_MINECART);
     public static final CustomMinecartItem DISPENSER_MINECART = new CustomMinecartItem(CustomMinecartType.DISPENSER, Items.FURNACE_MINECART);
     public static final CustomMinecartItem DROPPER_MINECART = new CustomMinecartItem(CustomMinecartType.DROPPER, Items.FURNACE_MINECART);
     public static final ShulkerMinecartItem SHULKER_MINECART = new ShulkerMinecartItem();
     public static final Map<DyeColor, CustomMinecartItem> COLORED_MINECART = new HashMap<>();
 
+    public static final Item SPEEDOMETER = new SpeedometerItem(new Item.Settings().group(ITEM_GROUP).maxCount(1));
+
     public static void register() {
-        register("minecart_enhancer", MINECART_ENHANCER);
+        // Legacy id, good idea to change it with 1.19
+        register("minecart_enhancer", MINECART_CONFIGURATION_TOOL);
+
         register("minecart_connecting_chain", MINECART_CONNECTOR);
         register("always_powered_rail", ALWAYS_POWERED_RAIL);
         register("colored_detector_rail", COLORED_DETECTOR_RAIL);
         register("pattern_detector_rail", PATTERN_DETECTOR_RAIL);
+        register("configuring_rail", CONFIGURING_RAIL);
 
         register("slime_minecart", SLIME_MINECART);
+        register("pocket_minecart", POCKET_MINECART);
         register("barrel_minecart", BARREL_MINECART);
         register("dispenser_minecart", DISPENSER_MINECART);
         register("dropper_minecart", DROPPER_MINECART);
@@ -70,6 +65,8 @@ public final class TcItems {
                     register(dyeColor.getName() + "_colored_minecart", new CustomMinecartItem(CustomMinecartType.COLORED.get(dyeColor), Items.MINECART))
             );
         }
+
+        register("speedometer", SPEEDOMETER);
     }
 
     private static <T extends Item> T register(String path, T item) {
@@ -78,20 +75,57 @@ public final class TcItems {
     }
 
     public static void createRecipes(TcDataGenerator.RecipeBuilder builder) {
-        Consumer<ShapelessRecipeJsonBuilder> hasMinecart = (b) -> b.criterion("has_minecart", InventoryChangedCriterion.Conditions.items(Items.MINECART));
+        Consumer<CraftingRecipeJsonBuilder> hasMinecart = (b) -> b.criterion("has_minecart", InventoryChangedCriterion.Conditions.items(Items.MINECART));
 
-        builder.createShapeless(MINECART_ENHANCER, 1, new Object[]{ Items.REDSTONE, Items.RAIL }, hasMinecart);
-        builder.createShapeless(ALWAYS_POWERED_RAIL, 1, new Object[]{ Items.RAIL, Items.REDSTONE_BLOCK }, hasMinecart);
-        builder.createShapeless(COLORED_DETECTOR_RAIL, 1, new Object[]{ Items.RAIL, Items.REDSTONE, Items.SPIDER_EYE }, hasMinecart);
-        builder.createShapeless(PATTERN_DETECTOR_RAIL, 1, new Object[]{ COLORED_DETECTOR_RAIL, Items.COPPER_INGOT, Items.COPPER_INGOT, Items.AMETHYST_SHARD, Items.AMETHYST_SHARD }, hasMinecart);
+        builder.createShapeless(MINECART_CONFIGURATION_TOOL, 1, new Object[]{ Items.STICK, Items.RAIL, Items.REDSTONE }, hasMinecart);
+        builder.createShapeless(ALWAYS_POWERED_RAIL, 1, new Object[]{ Items.POWERED_RAIL, Items.REDSTONE_TORCH }, hasMinecart);
 
-        builder.createShapeless(SLIME_MINECART, 1, new Object[]{ Items.MINECART, Items.SLIME_BLOCK }, hasMinecart);
-        builder.createShapeless(BARREL_MINECART, 1, new Object[]{ Items.MINECART, Items.BARREL }, hasMinecart);
-        builder.createShapeless(DISPENSER_MINECART, 1, new Object[]{ Items.MINECART, Items.DISPENSER }, hasMinecart);
-        builder.createShapeless(DROPPER_MINECART, 1, new Object[]{ Items.MINECART, Items.DROPPER }, hasMinecart);
+        builder.createShaped(COLORED_DETECTOR_RAIL, 1, (b) -> {
+            b.pattern("e ");
+            b.pattern("s ");
+            b.pattern("r ");
+
+            b.input('e', Items.SPIDER_EYE);
+            b.input('s', Items.REDSTONE);
+            b.input('r', Items.RAIL);
+
+            hasMinecart.accept(b);
+        });
+
+        builder.createShaped(PATTERN_DETECTOR_RAIL, 1, (b) -> {
+            b.pattern(" c ");
+            b.pattern("ara");
+            b.pattern(" c ");
+
+            b.input('c', Items.COPPER_INGOT);
+            b.input('a', Items.AMETHYST_SHARD);
+            b.input('r', COLORED_DETECTOR_RAIL);
+
+            hasMinecart.accept(b);
+        });
+
+        builder.createShaped(CONFIGURING_RAIL, 1, (b) -> {
+            b.pattern(" c ");
+            b.pattern("trl");
+            b.pattern(" c ");
+
+            b.input('c', Items.COPPER_INGOT);
+            b.input('t', Items.REDSTONE_TORCH);
+            b.input('l', Items.LEVER);
+            b.input('r', Items.RAIL);
+
+            hasMinecart.accept(b);
+        });
+
+        builder.createSimpleMinecart(SLIME_MINECART, 1, Items.SLIME_BLOCK, hasMinecart);
+        builder.createSimpleMinecart(BARREL_MINECART, 1, Items.BARREL, hasMinecart);
+        builder.createSimpleMinecart(DISPENSER_MINECART, 1, Items.DISPENSER, hasMinecart);
+        builder.createSimpleMinecart(DROPPER_MINECART, 1, Items.DROPPER, hasMinecart);
+        builder.createSimpleMinecart(POCKET_MINECART, 1, Items.LEATHER, hasMinecart);
+
 
         for (var entry : COLORED_MINECART.entrySet()) {
-            builder.createShapeless(entry.getValue(), 1, new Object[]{ Items.MINECART, Registry.ITEM.get(new Identifier(entry.getKey().getName() + "_wool")) }, hasMinecart);
+            builder.createSimpleMinecart(entry.getValue(), 1, Registry.ITEM.get(new Identifier(entry.getKey().getName() + "_wool")), hasMinecart);
         }
     }
 }

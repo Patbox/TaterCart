@@ -1,13 +1,17 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
-      "item": "minecraft:minecart"
-    },
-    {
-      "item": "minecraft:barrel"
-    }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "i ",
+    "m "
   ],
+  "key": {
+    "i": {
+      "item": "minecraft:barrel"
+    },
+    "m": {
+      "item": "minecraft:minecart"
+    }
+  },
   "result": {
     "item": "tatercart:barrel_minecart"
   }

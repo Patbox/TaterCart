@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "tatercart:configuring_rail"
+    ]
+  },
+  "criteria": {
+    "has_minecart": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:minecart"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "tatercart:configuring_rail"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_minecart",
+      "has_the_recipe"
+    ]
+  ]
+}

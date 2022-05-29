@@ -1,13 +1,17 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
-      "item": "minecraft:minecart"
-    },
-    {
-      "item": "minecraft:yellow_wool"
-    }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "i ",
+    "m "
   ],
+  "key": {
+    "i": {
+      "item": "minecraft:yellow_wool"
+    },
+    "m": {
+      "item": "minecraft:minecart"
+    }
+  },
   "result": {
     "item": "tatercart:yellow_colored_minecart"
   }

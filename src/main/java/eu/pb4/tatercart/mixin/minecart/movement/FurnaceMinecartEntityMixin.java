@@ -18,7 +18,7 @@ public abstract class FurnaceMinecartEntityMixin extends AbstractMinecartEntity 
 
     @Inject(method = "getMaxOffRailSpeed", at = @At("HEAD"), cancellable = true)
     private void tatercart_changeMaxSpeedToNormal(CallbackInfoReturnable<Double> cir) {
-        if (this.tatercart_customPhysics()) {
+        if (this.tatercart_hasCustomPhysics()) {
             cir.setReturnValue(super.getMaxOffRailSpeed());
         }
     }

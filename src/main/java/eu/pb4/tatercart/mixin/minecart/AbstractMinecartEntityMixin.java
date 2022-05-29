@@ -7,6 +7,7 @@ import eu.pb4.tatercart.entity.ExtendedMinecart;
 import eu.pb4.tatercart.entity.TcEntities;
 import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
 import eu.pb4.tatercart.entity.minecart.other.ColoredMinecartEntity;
+import eu.pb4.tatercart.entity.minecart.other.PocketMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.other.SlimeMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.BarrelMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.DispenserMinecartEntity;
@@ -57,6 +58,8 @@ public abstract class AbstractMinecartEntityMixin extends Entity {
             entity = new DispenserMinecartEntity(TcEntities.DISPENSER_MINECART, world);
         } else if (type == CustomMinecartType.DROPPER) {
             entity = new DropperMinecartEntity(TcEntities.DROPPER_MINECART, world);
+        } else if (type == CustomMinecartType.POCKET) {
+            entity = new PocketMinecartEntity(TcEntities.POCKET_MINECART, world);
         } else {
             entity = null;
         }
@@ -81,7 +84,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity {
                 this.tatercart_hologram.show();
             }
 
-            this.tatercart_hologram.setText(1, new LiteralText((((ExtendedMinecart) this).tatercart_customPhysics() ? "TaterCart" : "Vanilla") + " Physics"), true);
+            this.tatercart_hologram.setText(1, new LiteralText((((ExtendedMinecart) this).tatercart_hasCustomPhysics() ? "TaterCart" : "Vanilla") + " Physics"), true);
             this.tatercart_hologram.setText(2, new LiteralText("Pos: " + this.getPos().toString()), true);
             this.tatercart_hologram.setText(3, new LiteralText("Vel: " + this.getVelocity().toString()), true);
         }

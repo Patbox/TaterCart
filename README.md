@@ -27,5 +27,5 @@ https://user-images.githubusercontent.com/39821509/168445795-5e772176-d75d-4609-
 ## Downloads:
 - Github: https://github.com/Patbox/TaterCart/releases
 - Modrinth: https://modrinth.com/mod/tatercart
-- Curseforge: Soon™
+- Curseforge: https://curseforge.com/minecraft/mc-mods/tatercart
 

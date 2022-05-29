@@ -46,7 +46,7 @@ public abstract class CustomStorageMinecartEntity extends CustomMinecartEntity i
 
     @Override
     protected void applySlowdown() {
-        if (this.asExtended().tatercart_customPhysics() && (this.asExtended().tatercart_getLinked()[0] != null || this.asExtended().tatercart_getLinked()[1] != null)) {
+        if (this.asExtended().tatercart_hasCustomPhysics() && (this.asExtended().tatercart_getLinked()[0] != null || this.asExtended().tatercart_getLinked()[1] != null)) {
             super.applySlowdown();
         } else {
             float f = 0.98F;

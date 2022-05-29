@@ -2,21 +2,24 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     " c ",
-    "ara",
+    "trl",
     " c "
   ],
   "key": {
     "c": {
       "item": "minecraft:copper_ingot"
     },
-    "a": {
-      "item": "minecraft:amethyst_shard"
+    "t": {
+      "item": "minecraft:redstone_torch"
+    },
+    "l": {
+      "item": "minecraft:lever"
     },
     "r": {
-      "item": "tatercart:colored_detector_rail"
+      "item": "minecraft:rail"
     }
   },
   "result": {
-    "item": "tatercart:pattern_detector_rail"
+    "item": "tatercart:configuring_rail"
   }
 }

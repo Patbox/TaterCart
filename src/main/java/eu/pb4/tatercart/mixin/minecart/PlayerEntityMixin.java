@@ -1,6 +1,7 @@
 package eu.pb4.tatercart.mixin.minecart;
 
 import eu.pb4.tatercart.entity.ExtendedMinecart;
+import eu.pb4.tatercart.item.MinecartConfigurationToolItem;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.other.TcGameRules;
 import net.minecraft.entity.Entity;
@@ -10,12 +11,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,11 +34,13 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     private void tatercart_enchanceMinecart(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         var stack = this.getStackInHand(hand);
         if (this.world instanceof ServerWorld serverWorld && !stack.isEmpty() && entity instanceof ExtendedMinecart minecart) {
-            if (stack.isOf(TcItems.MINECART_ENHANCER)) {
-                var isEnhanced = minecart.tatercart_customPhysics();
-                minecart.tatercart_setPhysics(!isEnhanced);
-                serverWorld.spawnParticles(ParticleTypes.EXPLOSION, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0, 0, 0);
-                serverWorld.spawnParticles(new DustParticleEffect(isEnhanced ? new Vec3f(0.9f, 0, 0) : new Vec3f(0, 0.9f, 0), 1) , entity.getX(), entity.getY(), entity.getZ(), 20, 0.3, 0.3, 0.3, 0);
+            if (stack.isOf(TcItems.MINECART_CONFIGURATION_TOOL)) {
+                ((MinecartConfigurationToolItem) TcItems.MINECART_CONFIGURATION_TOOL).openGui((ServerPlayerEntity) (Object) this, minecart);
+
+                //var isEnhanced = minecart.tatercart_hasCustomPhysics();
+                //minecart.tatercart_setPhysics(!isEnhanced);
+                //serverWorld.spawnParticles(ParticleTypes.EXPLOSION, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0, 0, 0);
+                //serverWorld.spawnParticles(new DustParticleEffect(isEnhanced ? new Vec3f(0.9f, 0, 0) : new Vec3f(0, 0.9f, 0), 1) , entity.getX(), entity.getY(), entity.getZ(), 20, 0.3, 0.3, 0.3, 0);
 
                 cir.setReturnValue(ActionResult.SUCCESS);
             } else if (this.world.getGameRules().getBoolean(TcGameRules.MINECART_LINKING) && stack.isOf(Items.CHAIN)) {

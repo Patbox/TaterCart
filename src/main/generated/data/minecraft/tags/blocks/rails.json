@@ -3,6 +3,7 @@
   "values": [
     "tatercart:colored_detector_rail",
     "tatercart:always_powered_rail",
-    "tatercart:pattern_detector_rail"
+    "tatercart:pattern_detector_rail",
+    "tatercart:configuring_rail"
   ]
 }

@@ -7,10 +7,13 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.tag.TagKey;
 
@@ -42,11 +45,26 @@ public class TcDataGenerator implements DataGeneratorEntrypoint {
     }
 
     public record RecipeBuilder(Consumer<RecipeJsonProvider> exporter) {
-        public void createShapeless(Item result, int count, Object... items) {
-            this.createShapeless(result, count, items, (a) -> {});
+        public void createSimpleMinecart(Item result, int count, Object mainItem, Consumer<CraftingRecipeJsonBuilder> modifier) {
+            this.createShaped(result, count, (b) -> {
+                b.pattern("i ");
+                b.pattern("m ");
+
+                if (mainItem instanceof ItemConvertible item) {
+                    b.input('i', item);
+                } else if (mainItem instanceof TagKey item) {
+                    b.input('i', item);
+                } else if (mainItem instanceof Ingredient item) {
+                    b.input('i', item);
+                }
+
+                b.input('m', Items.MINECART);
+
+                modifier.accept(b);
+            });
         }
 
-        public void createShapeless(Item result, int count, Object[] items, Consumer<ShapelessRecipeJsonBuilder> modifier) {
+        public void createShapeless(Item result, int count, Object[] items, Consumer<CraftingRecipeJsonBuilder> modifier) {
             var b = new ShapelessRecipeJsonBuilder(result, count);
 
             for (var obj : items) {
@@ -61,6 +79,12 @@ public class TcDataGenerator implements DataGeneratorEntrypoint {
 
             modifier.accept(b);
 
+            b.offerTo(exporter);
+        }
+
+        public void createShaped(Item result, int count, Consumer<ShapedRecipeJsonBuilder> modifier) {
+            var b = new ShapedRecipeJsonBuilder(result, count);
+            modifier.accept(b);
             b.offerTo(exporter);
         }
     }

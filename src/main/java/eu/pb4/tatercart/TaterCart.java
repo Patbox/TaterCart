@@ -1,6 +1,7 @@
 package eu.pb4.tatercart;
 
 import eu.pb4.tatercart.block.TcBlocks;
+import eu.pb4.tatercart.blockentity.TcBlockEntities;
 import eu.pb4.tatercart.entity.TcEntities;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.other.TcGameRules;
@@ -21,6 +22,7 @@ public class TaterCart implements ModInitializer {
     @Override
     public void onInitialize() {
         TcBlocks.register();
+        TcBlockEntities.register();
         TcItems.register();
         TcEntities.register();
         TcGameRules.register();

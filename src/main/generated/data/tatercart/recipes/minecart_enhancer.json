@@ -2,10 +2,13 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:redstone"
+      "item": "minecraft:stick"
     },
     {
       "item": "minecraft:rail"
+    },
+    {
+      "item": "minecraft:redstone"
     }
   ],
   "result": {

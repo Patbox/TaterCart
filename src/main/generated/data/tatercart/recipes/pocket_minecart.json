@@ -6,13 +6,13 @@
   ],
   "key": {
     "i": {
-      "item": "minecraft:brown_wool"
+      "item": "minecraft:leather"
     },
     "m": {
       "item": "minecraft:minecart"
     }
   },
   "result": {
-    "item": "tatercart:brown_colored_minecart"
+    "item": "tatercart:pocket_minecart"
   }
 }

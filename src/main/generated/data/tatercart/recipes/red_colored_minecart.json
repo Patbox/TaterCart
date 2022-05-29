@@ -1,13 +1,17 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
-      "item": "minecraft:minecart"
-    },
-    {
-      "item": "minecraft:red_wool"
-    }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "i ",
+    "m "
   ],
+  "key": {
+    "i": {
+      "item": "minecraft:red_wool"
+    },
+    "m": {
+      "item": "minecraft:minecart"
+    }
+  },
   "result": {
     "item": "tatercart:red_colored_minecart"
   }

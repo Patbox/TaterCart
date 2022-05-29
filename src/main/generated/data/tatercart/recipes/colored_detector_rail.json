@@ -1,16 +1,21 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
-      "item": "minecraft:rail"
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "e ",
+    "s ",
+    "r "
+  ],
+  "key": {
+    "e": {
+      "item": "minecraft:spider_eye"
     },
-    {
+    "s": {
       "item": "minecraft:redstone"
     },
-    {
-      "item": "minecraft:spider_eye"
+    "r": {
+      "item": "minecraft:rail"
     }
-  ],
+  },
   "result": {
     "item": "tatercart:colored_detector_rail"
   }

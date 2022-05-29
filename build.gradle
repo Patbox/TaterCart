@@ -9,7 +9,7 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = project.mod_version + "+" + project.minecraft_version
 group = project.maven_group
 
 loom {
@@ -54,8 +54,9 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation include('fr.catcore:server-translations-api:1.4.12+1.18.2')
-    modImplementation include('eu.pb4:polymer:0.2.0-pre.5+1.18.2')
+    modImplementation include('eu.pb4:polymer:0.2.0-pre.6+1.18.2')
     modImplementation include("eu.pb4:hologram-api:0.2.1+1.18-pre5")
+    modImplementation include("eu.pb4:sgui:1.0.2+1.18.2")
     modImplementation include("eu.pb4:placeholder-api:1.1.3+1.17.1")
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
