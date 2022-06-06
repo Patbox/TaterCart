@@ -8,13 +8,14 @@ import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.block.enums.RailShape;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -90,7 +91,7 @@ public class ShulkerMinecartItem extends CustomMinecartItem {
         if (stack.hasNbt() && stack.getNbt().contains("ShulkerBox", NbtElement.COMPOUND_TYPE)) {
             var item = Registry.ITEM.get(Identifier.tryParse(stack.getSubNbt("ShulkerBox").getString("id")));
 
-            return new TranslatableText("item.tatercart.minecart_with_x", item.getName());
+            return Text.translatable("item.tatercart.minecart_with_x", item.getName());
         }
 
         return this.getName();

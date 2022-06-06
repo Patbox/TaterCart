@@ -13,13 +13,11 @@ import eu.pb4.tatercart.entity.minecart.storage.BarrelMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.DispenserMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.DropperMinecartEntity;
 import eu.pb4.tatercart.entity.minecart.storage.ShulkerMinecartEntity;
-import eu.pb4.tatercart.other.TcGameRules;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
@@ -33,8 +31,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractMinecartEntity.class)
 public abstract class AbstractMinecartEntityMixin extends Entity {
-    @Shadow public abstract AbstractMinecartEntity.Type getMinecartType();
-
     @Unique
     private EntityHologram tatercart_hologram;
 
@@ -70,30 +66,26 @@ public abstract class AbstractMinecartEntityMixin extends Entity {
         }
     }
 
+    @Shadow
+    public abstract AbstractMinecartEntity.Type getMinecartType();
+
     @Inject(method = "tick", at = @At("TAIL"))
     private void tatercart_tick(CallbackInfo ci) {
         if (TaterCart.SHOW_MARKER) {
             if (this.tatercart_hologram == null) {
                 this.tatercart_hologram = new EntityHologram(this, Vec3d.ZERO);
-                this.tatercart_hologram.setText(0, new LiteralText("" + Registry.ENTITY_TYPE.getId(this.getType())), true);
-                this.tatercart_hologram.setText(1, new LiteralText(""), true);
-                this.tatercart_hologram.setText(2, new LiteralText(""), true);
-                this.tatercart_hologram.setText(3, new LiteralText(""), true);
+                this.tatercart_hologram.setText(0, Text.literal("" + Registry.ENTITY_TYPE.getId(this.getType())), true);
+                this.tatercart_hologram.setText(1, Text.literal(""), true);
+                this.tatercart_hologram.setText(2, Text.literal(""), true);
+                this.tatercart_hologram.setText(3, Text.literal(""), true);
                 this.tatercart_hologram.setElement(4, new SpacingHologramElement(1.5));
                 this.tatercart_hologram.setItemStack(5, Items.TORCH.getDefaultStack(), true);
                 this.tatercart_hologram.show();
             }
 
-            this.tatercart_hologram.setText(1, new LiteralText((((ExtendedMinecart) this).tatercart_hasCustomPhysics() ? "TaterCart" : "Vanilla") + " Physics"), true);
-            this.tatercart_hologram.setText(2, new LiteralText("Pos: " + this.getPos().toString()), true);
-            this.tatercart_hologram.setText(3, new LiteralText("Vel: " + this.getVelocity().toString()), true);
-        }
-    }
-
-    @Inject(method = "dropItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;<init>(Lnet/minecraft/item/ItemConvertible;)V"), cancellable = true)
-    private void tatercart_dropsChange(DamageSource damageSource, CallbackInfo ci) {
-        if (!this.world.getGameRules().getBoolean(TcGameRules.SPLIT_ITEMS) && this.getType() != EntityType.MINECART) {
-            ci.cancel();
+            this.tatercart_hologram.setText(1, Text.literal((((ExtendedMinecart) this).tatercart_hasCustomPhysics() ? "TaterCart" : "Vanilla") + " Physics"), true);
+            this.tatercart_hologram.setText(2, Text.literal("Pos: " + this.getPos().toString()), true);
+            this.tatercart_hologram.setText(3, Text.literal("Vel: " + this.getVelocity().toString()), true);
         }
     }
 }

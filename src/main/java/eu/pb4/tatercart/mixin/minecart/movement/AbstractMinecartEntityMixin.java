@@ -65,7 +65,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
     }
 
     @Shadow
-    protected abstract double getMaxOffRailSpeed();
+    protected abstract double getMaxSpeed();
 
     @Shadow
     public abstract Direction getMovementDirection();
@@ -80,7 +80,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
         this.tatercart_maxSpeed = world.getGameRules().get(TcGameRules.DEFAULT_MINECART_SPEED).get();
     }
 
-    @Inject(method = "getMaxOffRailSpeed", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getMaxSpeed", at = @At("HEAD"), cancellable = true)
     private void tatercart_changeMaxOffRailSpeed(CallbackInfoReturnable<Double> cir) {
         if (this.tatercart_isEnchanced) {
             var isOnCurved = false;
@@ -179,7 +179,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
     @Inject(method = "moveOffRail", at = @At("HEAD"), cancellable = true)
     public void tatercart_customMoveOffRail(CallbackInfo ci) {
         if (this.tatercart_isEnchanced) {
-            var max = this.getMaxOffRailSpeed() * 2.5;
+            var max = this.getMaxSpeed() * 2.5;
             var movement = this.asEntity().getVelocity();
 
             if (this.tatercart_lastRailBlockState == null) {
@@ -298,7 +298,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
 
             for (var cart : this.tatercart_linkedMinecart) {
                 if (cart != null) {
-                    if (cart.distanceTo(this) > this.getMaxOffRailSpeed() * 5 || cart.isRemoved()) {
+                    if (cart.distanceTo(this) > this.getMaxSpeed() * 5 || cart.isRemoved()) {
                         ExtendedMinecart.of(cart).tatercart_removeLinked(this.asEntity());
                         this.tatercart_removeLinked(cart);
                         this.dropItem(Items.CHAIN);

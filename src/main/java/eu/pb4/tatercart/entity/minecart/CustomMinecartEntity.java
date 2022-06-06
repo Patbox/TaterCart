@@ -4,20 +4,16 @@ import eu.pb4.polymer.api.entity.PolymerEntity;
 import eu.pb4.polymer.impl.interfaces.EntityAttachedPacket;
 import eu.pb4.tatercart.entity.ExtendedMinecart;
 import eu.pb4.tatercart.mixin.accessor.AbstractMinecartEntityAccessor;
-import eu.pb4.tatercart.other.TcGameRules;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.server.world.EntityTrackingListener;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -44,6 +40,11 @@ public abstract class CustomMinecartEntity extends AbstractMinecartEntity implem
         super(entityType, world);
     }
 
+    @Override
+    public ItemStack getPickBlockStack() {
+        return new ItemStack(this.getItem());
+    }
+
     protected void setVisualBlockState(BlockState state) {
         this.visualBlock = state;
         this.markDataTrackerAsDirty();
@@ -52,18 +53,6 @@ public abstract class CustomMinecartEntity extends AbstractMinecartEntity implem
     protected void setVisualBlockOffset(int offset) {
         this.visualOffset = offset;
         this.markDataTrackerAsDirty();
-    }
-
-    @Nullable
-    protected abstract Item getDropItem();
-
-    @Override
-    public void dropItems(DamageSource damageSource) {
-        super.dropItems(damageSource);
-        var item = this.getDropItem();
-        if (!damageSource.isExplosive() && item != null && this.world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
-            this.dropItem(item);
-        }
     }
 
     protected void markDataTrackerAsDirty() {
@@ -133,10 +122,6 @@ public abstract class CustomMinecartEntity extends AbstractMinecartEntity implem
 
     protected BlockState getVisualState() {
         return this.visualBlock;
-    }
-
-    protected boolean dropSplit() {
-        return this.world.getGameRules().getBoolean(TcGameRules.SPLIT_ITEMS);
     }
 
     protected ExtendedMinecart asExtended() {

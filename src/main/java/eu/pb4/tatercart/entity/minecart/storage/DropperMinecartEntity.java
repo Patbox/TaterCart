@@ -10,12 +10,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class DropperMinecartEntity extends DispenserMinecartEntity {
     private static final DispenserBehavior BEHAVIOR = new ItemDispenserBehavior();
@@ -27,8 +25,8 @@ public class DropperMinecartEntity extends DispenserMinecartEntity {
     }
 
     @Override
-    protected @Nullable Item getDropItem() {
-        return this.dropSplit() ? Items.DROPPER : TcItems.DROPPER_MINECART;
+    protected Item getItem() {
+        return TcItems.DROPPER_MINECART;
     }
 
     @Override

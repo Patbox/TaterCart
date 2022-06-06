@@ -9,9 +9,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class PocketMinecartEntity extends CustomMinecartEntity {
     public PlayerEntity owner = null;
@@ -23,8 +21,8 @@ public class PocketMinecartEntity extends CustomMinecartEntity {
 
 
     @Override
-    protected @Nullable Item getDropItem() {
-        return this.dropSplit() ? Items.LEATHER : TcItems.POCKET_MINECART;
+    protected Item getItem() {
+        return TcItems.POCKET_MINECART;
     }
 
     @Override

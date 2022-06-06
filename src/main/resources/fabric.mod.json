@@ -17,6 +17,7 @@
   "license": "LGPLv3",
   "icon": "assets/tatercart/icon.png",
 
+  "accessWidener": "tatercart.accesswidener",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -37,7 +38,7 @@
   "depends": {
     "fabricloader": ">=0.13.3",
     "fabric": "*",
-    "minecraft": "1.18.2",
+    "minecraft": ">=1.19-rc.2",
     "java": ">=17"
   }
 }

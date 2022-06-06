@@ -9,7 +9,6 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 public class MinecartConfigurationToolItem extends GlowingItem {
@@ -41,7 +40,7 @@ public class MinecartConfigurationToolItem extends GlowingItem {
                 this.currentEnchancedPhysics = this.controller.tatercart_hasCustomPhysics();
 
                 this.setSlot(0, new GuiElementBuilder(Items.REDSTONE)
-                        .setName(new TranslatableText("gui.tatercart.configure.enchanced_physics", fromBoolean(this.currentEnchancedPhysics)))
+                        .setName(Text.translatable("gui.tatercart.configure.enchanced_physics", fromBoolean(this.currentEnchancedPhysics)))
                         .setCallback((x, y, z) -> {
                             this.controller.tatercart_setPhysics(!this.currentEnchancedPhysics);
                         })
@@ -52,8 +51,8 @@ public class MinecartConfigurationToolItem extends GlowingItem {
                 this.currentSpeed = this.controller.tatercart_getSpeed();
 
                 this.setSlot(2, new GuiElementBuilder(Items.FEATHER)
-                        .setName(new TranslatableText("gui.tatercart.configure.speed",
-                                new TranslatableText("text.tatercart.blocks_per_second", this.currentSpeed).formatted(Formatting.GREEN)))
+                        .setName(Text.translatable("gui.tatercart.configure.speed",
+                                Text.translatable("text.tatercart.blocks_per_second", this.currentSpeed).formatted(Formatting.GREEN)))
                         .setCallback((x, y, z) -> {
                             if (y.isRight || y.isLeft) {
                                 double change = y.isLeft ? -1 : 1;
@@ -72,7 +71,7 @@ public class MinecartConfigurationToolItem extends GlowingItem {
                 this.currentBrakesState = this.controller.tatercart_getBrakes();
 
                 this.setSlot(4, new GuiElementBuilder(Items.IRON_INGOT)
-                        .setName(new TranslatableText("gui.tatercart.configure.brakes", fromBoolean(this.currentBrakesState)))
+                        .setName(Text.translatable("gui.tatercart.configure.brakes", fromBoolean(this.currentBrakesState)))
                         .setCallback((x, y, z) -> {
                             this.controller.tatercart_setBrakes(!this.currentBrakesState);
                         })
@@ -82,8 +81,8 @@ public class MinecartConfigurationToolItem extends GlowingItem {
 
         private static Text fromBoolean(boolean state) {
             return state
-                    ? new TranslatableText("gui.tatercart.configure.enabled").formatted(Formatting.GREEN)
-                    : new TranslatableText("gui.tatercart.configure.disabled").formatted(Formatting.RED);
+                    ? Text.translatable("gui.tatercart.configure.enabled").formatted(Formatting.GREEN)
+                    : Text.translatable("gui.tatercart.configure.disabled").formatted(Formatting.RED);
         }
 
         @Override

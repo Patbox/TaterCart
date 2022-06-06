@@ -1,11 +1,10 @@
 package eu.pb4.tatercart.entity.minecart.other;
 
 import com.mojang.datafixers.util.Pair;
+import eu.pb4.holograms.impl.HologramHelper;
 import eu.pb4.holograms.mixin.accessors.EntityAccessor;
 import eu.pb4.holograms.mixin.accessors.EntityPassengersSetS2CPacketAccessor;
 import eu.pb4.holograms.mixin.accessors.EntityTrackerUpdateS2CPacketAccessor;
-import eu.pb4.holograms.mixin.accessors.MobSpawnS2CPacketAccessor;
-import eu.pb4.holograms.utils.PacketHelpers;
 import eu.pb4.polymer.api.entity.PolymerEntityUtils;
 import eu.pb4.tatercart.entity.Colorable;
 import eu.pb4.tatercart.entity.TcEntities;
@@ -24,9 +23,7 @@ import net.minecraft.item.BannerItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.EntitiesDestroyS2CPacket;
-import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.EntitySetHeadYawS2CPacket;
+import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -35,9 +32,9 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +43,7 @@ import java.util.UUID;
 public class ColoredMinecartEntity extends CustomMinecartEntity implements Colorable {
     private final ArrayList<ServerPlayerEntity> listeners = new ArrayList<>();
     private final int bannerEntityId;
+    private final UUID bannerEntityUUID;
 
     private final DyeColor color;
     private ItemStack bannerItemStack;
@@ -62,6 +60,7 @@ public class ColoredMinecartEntity extends CustomMinecartEntity implements Color
 
         this.setCustomBlock(Registry.BLOCK.get(new Identifier(color.getName() + "_wool")).getDefaultState());
         this.bannerEntityId = PolymerEntityUtils.requestFreeId();
+        this.bannerEntityUUID = UUID.randomUUID();
     }
 
     @Override
@@ -99,8 +98,8 @@ public class ColoredMinecartEntity extends CustomMinecartEntity implements Color
     }
 
     @Override
-    protected @Nullable Item getDropItem() {
-        return this.dropSplit() ? this.bannerItem : TcItems.COLORED_MINECART.get(this.color);
+    protected Item getItem() {
+        return TcItems.COLORED_MINECART.get(this.color);
     }
 
     @Override
@@ -131,24 +130,12 @@ public class ColoredMinecartEntity extends CustomMinecartEntity implements Color
 
        this.listeners.add(player);
 
-        {
-            var packet = PacketHelpers.createMobSpawn();
-            var accessor = (MobSpawnS2CPacketAccessor) packet;
-            accessor.setId(bannerEntityId);
-            accessor.setUUID(UUID.randomUUID());
-            accessor.setYaw((byte) (interpolatedYaw - 90));
-            accessor.setHeadYaw((byte) 0);
-            accessor.setPitch((byte) 0);
-            accessor.setX(getX());
-            accessor.setY(getY());
-            accessor.setZ(getZ());
-            accessor.setEntityType(Registry.ENTITY_TYPE.getRawId(EntityType.ZOMBIE));
 
-            player.networkHandler.sendPacket(packet);
-        }
+       player.networkHandler.sendPacket(new EntitySpawnS2CPacket(this.bannerEntityId, this.bannerEntityUUID, this.getX(), this.getY(), this.getZ(), 0f, (float) (interpolatedYaw - 90), EntityType.ZOMBIE, 0, Vec3d.ZERO, 0));
+
 
         {
-            var packet = PacketHelpers.createEntityTrackerUpdate();
+            var packet = HologramHelper.createUnsafe(EntityTrackerUpdateS2CPacket.class);
             var accessor = (EntityTrackerUpdateS2CPacketAccessor) packet;
 
             accessor.setId(bannerEntityId);
@@ -166,7 +153,7 @@ public class ColoredMinecartEntity extends CustomMinecartEntity implements Color
         }
 
         {
-            var packet = PacketHelpers.createEntityPassengersSet();
+            var packet = HologramHelper.createUnsafe(EntityPassengersSetS2CPacket.class);
             var accessor = (EntityPassengersSetS2CPacketAccessor) packet;
             accessor.setId(this.getId());
             accessor.setPassengers(new int[]{this.bannerEntityId});

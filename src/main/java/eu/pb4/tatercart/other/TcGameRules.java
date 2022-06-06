@@ -20,9 +20,6 @@ public class TcGameRules {
     public static GameRules.Key<GameRules.BooleanRule> MINECART_LINKING
             = GameRuleRegistry.register(TaterCart.ID + ":minecart_linking", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(true));
 
-    public static GameRules.Key<GameRules.BooleanRule> SPLIT_ITEMS
-            = GameRuleRegistry.register(TaterCart.ID + ":split_items", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(false));
-
     public static GameRules.Key<DoubleRule> MAX_MINECART_SPEED
             = GameRuleRegistry.register(TaterCart.ID + ":max_speed", GameRules.Category.MISC,
             GameRuleFactory.createDoubleRule(24, 1, 100));

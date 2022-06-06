@@ -12,7 +12,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 
@@ -105,7 +104,7 @@ public final class ConfiguringRailBlockEntity extends BlockEntity {
                 this.currentEnchancedPhysics = this.controller.enchancedPhysics;
 
                 this.setSlot(0, new GuiElementBuilder(Items.REDSTONE)
-                        .setName(new TranslatableText("gui.tatercart.configure.enchanced_physics", fromTriState(this.currentEnchancedPhysics)))
+                        .setName(Text.translatable("gui.tatercart.configure.enchanced_physics", fromTriState(this.currentEnchancedPhysics)))
                         .setCallback((x, y, z) -> {
                             this.controller.enchancedPhysics = nextTriState(this.controller.enchancedPhysics);
                             this.controller.markDirty();
@@ -117,9 +116,9 @@ public final class ConfiguringRailBlockEntity extends BlockEntity {
                 this.currentSpeed = this.controller.speed;
 
                 this.setSlot(2, new GuiElementBuilder(Items.FEATHER)
-                        .setName(new TranslatableText("gui.tatercart.configure.speed", this.currentSpeed > 0
-                                        ? new TranslatableText("text.tatercart.blocks_per_second", this.currentSpeed).formatted(Formatting.GREEN)
-                                        : new TranslatableText("gui.tatercart.configure.keep_current").formatted(Formatting.GRAY)
+                        .setName(Text.translatable("gui.tatercart.configure.speed", this.currentSpeed > 0
+                                        ? Text.translatable("text.tatercart.blocks_per_second", this.currentSpeed).formatted(Formatting.GREEN)
+                                        : Text.translatable("gui.tatercart.configure.keep_current").formatted(Formatting.GRAY)
                                 ))
                         .setCallback((x, y, z) -> {
                             if (y.isRight || y.isLeft) {
@@ -140,7 +139,7 @@ public final class ConfiguringRailBlockEntity extends BlockEntity {
                 this.currentBrakesState = this.controller.brakesState;
 
                 this.setSlot(4, new GuiElementBuilder(Items.IRON_INGOT)
-                        .setName(new TranslatableText("gui.tatercart.configure.brakes", fromTriState(this.currentBrakesState)))
+                        .setName(Text.translatable("gui.tatercart.configure.brakes", fromTriState(this.currentBrakesState)))
                         .setCallback((x, y, z) -> {
                             this.controller.brakesState = nextTriState(this.controller.brakesState);
                             this.controller.markDirty();
@@ -151,9 +150,9 @@ public final class ConfiguringRailBlockEntity extends BlockEntity {
 
         private static Text fromTriState(TriState state) {
             return switch (state) {
-                case TRUE -> new TranslatableText("gui.tatercart.configure.enabled").formatted(Formatting.GREEN);
-                case FALSE -> new TranslatableText("gui.tatercart.configure.disabled").formatted(Formatting.RED);
-                case DEFAULT -> new TranslatableText("gui.tatercart.configure.keep_current").formatted(Formatting.GRAY);
+                case TRUE -> Text.translatable("gui.tatercart.configure.enabled").formatted(Formatting.GREEN);
+                case FALSE -> Text.translatable("gui.tatercart.configure.disabled").formatted(Formatting.RED);
+                case DEFAULT -> Text.translatable("gui.tatercart.configure.keep_current").formatted(Formatting.GRAY);
             };
         }
 

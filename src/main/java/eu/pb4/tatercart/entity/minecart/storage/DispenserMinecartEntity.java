@@ -1,7 +1,6 @@
 package eu.pb4.tatercart.entity.minecart.storage;
 
 import eu.pb4.tatercart.entity.Directional;
-import eu.pb4.tatercart.entity.ExtendedMinecart;
 import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
 import eu.pb4.tatercart.item.TcItems;
 import eu.pb4.tatercart.mixin.DispenserBlockAccessor;
@@ -10,14 +9,11 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.screen.Generic3x3ContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
@@ -25,7 +21,6 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
@@ -91,7 +86,7 @@ public class DispenserMinecartEntity extends CustomStorageMinecartEntity impleme
 
         if (i < 0) {
             world.syncWorldEvent(1001, pos, 0);
-            world.emitGameEvent(GameEvent.DISPENSE_FAIL, pos);
+            world.emitGameEvent(this, GameEvent.DISPENSE_FAIL, pos);
         } else {
             ItemStack itemStack = this.getStack(i);
             DispenserBehavior dispenserBehavior = this.getBehaviorForItem(itemStack);
@@ -176,13 +171,8 @@ public class DispenserMinecartEntity extends CustomStorageMinecartEntity impleme
     }
 
     @Override
-    protected @Nullable Item getDropItem() {
-        return this.dropSplit() ? Items.DISPENSER : TcItems.DISPENSER_MINECART;
-    }
-
-    @Override
-    public ItemStack getPickBlockStack() {
-        return TcItems.DISPENSER_MINECART.getDefaultStack();
+    protected Item getItem() {
+        return TcItems.DISPENSER_MINECART;
     }
 
     private void updateVisualState() {

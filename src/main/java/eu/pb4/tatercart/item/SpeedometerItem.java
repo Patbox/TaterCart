@@ -8,8 +8,7 @@ import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -26,8 +25,8 @@ public class SpeedometerItem extends GlowingItem {
                 var list = stack.getNbt().getList("lastPos", NbtElement.DOUBLE_TYPE);
                 var vec = new Vec3d(list.getDouble(0), list.getDouble(1), list.getDouble(2)).relativize(currentPos);
 
-                player.sendMessage(new TranslatableText("text.tatercart.speedometer_info",
-                        new TranslatableText("text.tatercart.blocks_per_second", Math.round(vec.length() * 20 * 100) / 100d)
+                player.sendMessage(Text.translatable("text.tatercart.speedometer_info",
+                        Text.translatable("text.tatercart.blocks_per_second", Math.round(vec.length() * 20 * 100) / 100d)
                 ), true);
             }
 
@@ -39,7 +38,7 @@ public class SpeedometerItem extends GlowingItem {
         } else if (stack.hasNbt() && stack.getNbt().contains("lastPos")) {
             stack.getNbt().remove("lastPos");
             if (entity instanceof ServerPlayerEntity player) {
-                player.sendMessage(LiteralText.EMPTY, true);
+                player.sendMessage(Text.empty(), true);
             }
         }
     }

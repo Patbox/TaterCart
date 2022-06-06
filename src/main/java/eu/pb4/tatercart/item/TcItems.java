@@ -9,7 +9,7 @@ import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 import static eu.pb4.tatercart.TaterCart.id;
 
 public final class TcItems {
-    public static final PolymerItemGroup ITEM_GROUP = PolymerItemGroup.create(id("general"), new LiteralText("TaterCart")).setIcon(() -> new ItemStack(Items.MINECART));
+    public static final PolymerItemGroup ITEM_GROUP = PolymerItemGroup.create(id("general"), Text.literal("TaterCart")).setIcon(() -> new ItemStack(Items.MINECART));
 
     public static final Item MINECART_CONFIGURATION_TOOL = new MinecartConfigurationToolItem(new Item.Settings().maxCount(1).group(ITEM_GROUP));
 

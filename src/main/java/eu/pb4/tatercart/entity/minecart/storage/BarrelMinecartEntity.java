@@ -4,19 +4,15 @@ import eu.pb4.tatercart.entity.minecart.CustomMinecartType;
 import eu.pb4.tatercart.item.TcItems;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class BarrelMinecartEntity extends CustomStorageMinecartEntity {
     private final DefaultedList<ItemStack> inventory;
@@ -34,13 +30,8 @@ public class BarrelMinecartEntity extends CustomStorageMinecartEntity {
     }
 
     @Override
-    protected @Nullable Item getDropItem() {
-        return this.dropSplit() ? Items.BARREL : TcItems.BARREL_MINECART;
-    }
-
-    @Override
-    public ItemStack getPickBlockStack() {
-        return TcItems.BARREL_MINECART.getDefaultStack();
+    protected Item getItem() {
+        return TcItems.BARREL_MINECART;
     }
 
     @Override

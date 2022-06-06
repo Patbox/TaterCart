@@ -1,14 +1,15 @@
 package eu.pb4.tatercart.block.rail;
 
 import eu.pb4.polymer.api.block.PolymerBlock;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.PoweredRailBlock;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.Random;
 
 public class AlwaysPoweredRailBlock extends PoweredRailBlock implements PolymerBlock {
     public AlwaysPoweredRailBlock(Settings settings) {
@@ -38,7 +39,7 @@ public class AlwaysPoweredRailBlock extends PoweredRailBlock implements PolymerB
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, net.minecraft.util.math.random.Random random) {
         world.spawnParticles(DustParticleEffect.DEFAULT, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 1, 0.01, 0.01, 0.01, 0.1);
     }
 

@@ -7,19 +7,15 @@ import eu.pb4.tatercart.mixin.accessor.EntityAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class SlimeMinecartEntity extends CustomMinecartEntity {
     private boolean isSlimeVisible = false;
@@ -36,8 +32,8 @@ public class SlimeMinecartEntity extends CustomMinecartEntity {
     }
 
     @Override
-    protected @Nullable Item getDropItem() {
-        return this.dropSplit() ? Items.SLIME_BLOCK : TcItems.SLIME_MINECART;
+    protected Item getItem() {
+        return TcItems.SLIME_MINECART;
     }
 
     @Override

@@ -22,11 +22,9 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implements Colorable {
     private final DefaultedList<ItemStack> inventory;
@@ -104,7 +102,7 @@ public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implement
 
     @Override
     protected Text getDefaultName() {
-        return new TranslatableText("entity.tatercart.minecart_with_x", this.shulkerBox.getItem().getName());
+        return Text.translatable("entity.tatercart.minecart_with_x", this.shulkerBox.getItem().getName());
     }
 
     @Override
@@ -112,12 +110,12 @@ public class ShulkerMinecartEntity extends CustomStorageMinecartEntity implement
         var shulkerBox = this.shulkerBox.copy();
         this.inventory.clear();
         super.dropItems(damageSource);
-        this.dropStack(this.dropSplit() ? shulkerBox : TcItems.SHULKER_MINECART.from(shulkerBox));
+        this.dropStack(TcItems.SHULKER_MINECART.from(shulkerBox));
     }
 
     @Override
-    protected @Nullable Item getDropItem() {
-        return null;
+    protected Item getItem() {
+        return Items.AIR;
     }
 
     @Override
