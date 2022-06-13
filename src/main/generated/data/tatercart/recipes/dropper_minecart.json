@@ -1,9 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "i ",
-    "m "
-  ],
   "key": {
     "i": {
       "item": "minecraft:dropper"
@@ -12,6 +8,10 @@
       "item": "minecraft:minecart"
     }
   },
+  "pattern": [
+    "i ",
+    "m "
+  ],
   "result": {
     "item": "tatercart:dropper_minecart"
   }

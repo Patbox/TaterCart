@@ -1,9 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "i ",
-    "m "
-  ],
   "key": {
     "i": {
       "item": "minecraft:light_gray_wool"
@@ -12,6 +8,10 @@
       "item": "minecraft:minecart"
     }
   },
+  "pattern": [
+    "i ",
+    "m "
+  ],
   "result": {
     "item": "tatercart:light_gray_colored_minecart"
   }

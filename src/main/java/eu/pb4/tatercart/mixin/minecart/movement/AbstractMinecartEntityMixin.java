@@ -208,7 +208,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
                 this.asEntity().setVelocity(this.asEntity().getVelocity().multiply(0.995d));
             }
 
-            var ad = ((EntityAccessor) this.asEntity()).callAdjustMovementForCollisions(movement);
+            var ad = ((EntityAccessor) this.asEntity()).callAdjustMovementForCollisions(this.asEntity().getVelocity());
             var pos = this.asEntity().getPos();
             var deltaX = this.asEntity().getPos().x + ad.x;
             var deltaY = this.asEntity().getPos().y + ad.y;
@@ -403,7 +403,7 @@ public abstract class AbstractMinecartEntityMixin extends Entity implements Exte
             for (var entity : list) {
                 if (entity instanceof LivingEntity && !entity.noClip && !this.noClip && !this.getPassengerList().contains(entity) && !entity.hasVehicle()) {
                     entity.damage(DamageSource.FLY_INTO_WALL, (float) Math.min(speed, 18));
-                    entity.addVelocity(this.getVelocity().x, this.getVelocity().y + 0.5, this.getVelocity().z);
+                    entity.setVelocity(this.getVelocity().add(0, 0.5, 0).normalize().multiply(Math.min(this.getVelocity().length() + entity.getVelocity().length(), 30)));
                 }
             }
         }

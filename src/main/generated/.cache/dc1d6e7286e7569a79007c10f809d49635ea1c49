@@ -1,0 +1,5 @@
+// 1.19 Release Candidate 2	2022-06-06T12:49:37.993740505	Block Loot Tables
+6250857d9c27e3b042c14652aadf2deb9cd40a8e data/tatercart/loot_tables/blocks/pattern_detector_rail.json
+01c63d46f4a6aed5f1350d4995271daf05b0d3d2 data/tatercart/loot_tables/blocks/configuring_rail.json
+afb8a817c3c03690ea72a71966b16b3d8071250d data/tatercart/loot_tables/blocks/always_powered_rail.json
+fd4b4d60c4d015f94b6641f115e2e30d4b7c643d data/tatercart/loot_tables/blocks/colored_detector_rail.json

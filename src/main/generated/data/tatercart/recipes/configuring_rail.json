@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " c ",
-    "trl",
-    " c "
-  ],
   "key": {
     "c": {
       "item": "minecraft:copper_ingot"
-    },
-    "t": {
-      "item": "minecraft:redstone_torch"
     },
     "l": {
       "item": "minecraft:lever"
     },
     "r": {
       "item": "minecraft:rail"
+    },
+    "t": {
+      "item": "minecraft:redstone_torch"
     }
   },
+  "pattern": [
+    " c ",
+    "trl",
+    " c "
+  ],
   "result": {
     "item": "tatercart:configuring_rail"
   }
